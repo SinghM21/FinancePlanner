@@ -1,4 +1,6 @@
-﻿@{
+﻿@model FinancePlanner.ViewModels.DashboardViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -16,8 +18,18 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('myChart');
-    const labels = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
+    var min = new Date().getFullYear()
+    var max = min + 10
+    var years = []
+
+    for (var i = min; i <= max; i++) {
+      years.push(i)
+    }
+
+    const labels = years;
+
+    var data1 = @Html.Raw(Model.monthlyIncome);
+    var data3 = @Html.Raw(Model.monthlyOutcome);
 
     new Chart(ctx, {
         type: 'line',
@@ -25,14 +37,14 @@
             labels: labels,
             datasets: [{
                 label: 'Income',
-                data: [0, 0, 0, 0, 0, 65, 59, 80, 81, 56, 55, 40],
+                data: [data1],
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             },
             {
                 label: 'Outcome',
-                data: [0, 0, 0, 0, 0, 35, 29, 70, 71, 46, 45, 30],
+                data: [data3],
                 fill: false,
                 borderColor: 'rgb(255, 0, 0)',
                 tension: 0.1
@@ -45,7 +57,7 @@
             plugins: {
                 title: {
                     display: true,
-                    text: 'Income/Outcome Chart (Thousands)'
+                    text: '10 Year Portfolio Projection'
                 }
             },
             scales: {
