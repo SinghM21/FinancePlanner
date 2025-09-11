@@ -15,11 +15,23 @@
     </div>
 </div>
 
+@using (Html.BeginForm("Index", "Home", FormMethod.Post))
+{
+    <div>
+        <label>Expected Income Increase:</label>
+        <input type="number" id="expectedIncomeIncreasePercentage" name="expectedIncomeIncreasePercentage" min="0" max="100" />
+        <br />
+        <label>Expected Outcome Increase:</label>
+        <input type="number" id="expectedOutcomeIncreasePercentage" name="expectedOutcomeIncreasePercentage" min="0" max="100" />
+        <input type="submit" />
+    </div>
+}
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('myChart');
     var min = new Date().getFullYear()
-    var max = min + 10
+    var max = min + 9
     var years = []
 
     for (var i = min; i <= max; i++) {
@@ -28,8 +40,14 @@
 
     const labels = years;
 
-    var data1 = @Html.Raw(Model.monthlyIncome);
-    var data3 = @Html.Raw(Model.monthlyOutcome);
+    var incomesArray = [];
+
+    @foreach (var income in Model.yearlyIncome)
+    {
+        @:incomesArray.push("@income");
+    }
+
+    alert(incomesArray);
 
     new Chart(ctx, {
         type: 'line',
@@ -37,14 +55,14 @@
             labels: labels,
             datasets: [{
                 label: 'Income',
-                data: [data1],
+                data: incomesArray,
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             },
             {
                 label: 'Outcome',
-                data: [data3],
+                data: incomesArray,
                 fill: false,
                 borderColor: 'rgb(255, 0, 0)',
                 tension: 0.1
