@@ -4,7 +4,7 @@
     {
         public int monthlyIncome { get; set; }
         public int monthlyOutcome { get; set; }
-        public int[]? yearlyIncome { get; set; }
-        public int[]? yearlyOutcome { get; set; }
+        public decimal[]? yearlyIncome { get; set; }
+        public decimal[]? yearlyOutcome { get; set; }
     }
 }

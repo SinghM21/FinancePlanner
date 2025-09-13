@@ -19,10 +19,10 @@
 {
     <div>
         <label>Expected Income Increase:</label>
-        <input type="number" id="expectedIncomeIncreasePercentage" name="expectedIncomeIncreasePercentage" min="0" max="100" />
+        <input type="number" id="IncomeProjectionIncreaseNumber" name="IncomeProjectionIncreaseNumber" min="0" max="100" />
         <br />
         <label>Expected Outcome Increase:</label>
-        <input type="number" id="expectedOutcomeIncreasePercentage" name="expectedOutcomeIncreasePercentage" min="0" max="100" />
+        <input type="number" id="OutcomeProjectionIncreaseNumber" name="OutcomeProjectionIncreaseNumber" min="0" max="100" />
         <input type="submit" />
     </div>
 }
@@ -31,7 +31,7 @@
 <script>
     const ctx = document.getElementById('myChart');
     var min = new Date().getFullYear()
-    var max = min + 9
+    var max = min + 10
     var years = []
 
     for (var i = min; i <= max; i++) {
