@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancePlanner", "FinancePlanner.csproj", "{2422F87D-0106-493B-9621-9CC20F7D98D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinancePlannerTests", "..\FinancePlannerTests\FinancePlannerTests.csproj", "{7E1006BC-0F01-4009-8220-F01AA9C959FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{2422F87D-0106-493B-9621-9CC20F7D98D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2422F87D-0106-493B-9621-9CC20F7D98D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2422F87D-0106-493B-9621-9CC20F7D98D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E1006BC-0F01-4009-8220-F01AA9C959FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E1006BC-0F01-4009-8220-F01AA9C959FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E1006BC-0F01-4009-8220-F01AA9C959FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E1006BC-0F01-4009-8220-F01AA9C959FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

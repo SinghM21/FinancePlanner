@@ -26,13 +26,7 @@ namespace FinancePlanner.Controllers
             int currentIncome = _context.Income.Sum(i => i.Amount);
             int currentOutcome = _context.Outcome.Sum(o => o.Cost);
 
-            DashboardViewModel dashboardViewModel = new DashboardViewModel()
-            {
-                monthlyIncome = currentIncome,
-                monthlyOutcome = currentOutcome,
-                yearlyIncome = CalculateYearlyIncomes(currentIncome, 0),
-                yearlyOutcome = CalculateYearlyOutcomes(currentOutcome, 0)
-            };
+            DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome);
 
             return View(dashboardViewModel);
         }
@@ -43,44 +37,9 @@ namespace FinancePlanner.Controllers
             int currentIncome = _context.Income.Sum(i => i.Amount);
             int currentOutcome = _context.Outcome.Sum(o => o.Cost);
 
-            DashboardViewModel dashboardViewModel = new DashboardViewModel()
-            {
-                monthlyIncome = currentIncome,
-                monthlyOutcome = currentOutcome,
-                yearlyIncome = CalculateYearlyIncomes(currentIncome, ConvertNumberToDecimal(dashboardFormValues.IncomeProjectionIncreaseNumber)),
-                yearlyOutcome = CalculateYearlyOutcomes(currentOutcome, ConvertNumberToDecimal(dashboardFormValues.OutcomeProjectionIncreaseNumber))
-            };
+            DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome, dashboardFormValues);
 
             return View(dashboardViewModel);
-        }
-
-        public decimal[] CalculateYearlyIncomes(int currentIncome, decimal expectedIncomeIncreasePercentage)
-        {
-            List <decimal> yearlyIncomes = new() { currentIncome };
-            for (int years = 1; years <= 10; years++)
-            {
-                decimal nextIncomeIncrease = yearlyIncomes.ElementAt(years - 1) * (expectedIncomeIncreasePercentage + 1);
-                yearlyIncomes.Add(nextIncomeIncrease);
-            }
-
-            return yearlyIncomes.ToArray();
-        }
-
-        public decimal[] CalculateYearlyOutcomes(int currentOutcome, decimal expectedOutcomeIncreasePercentage)
-        {
-            List<decimal> yearlyOutcomes = new() { currentOutcome };
-            for (int years = 1; years <= 10; years++)
-            {
-                decimal nextOutcomeIncrease = yearlyOutcomes.ElementAt(years - 1) * (expectedOutcomeIncreasePercentage + 1);
-                yearlyOutcomes.Add(nextOutcomeIncrease);
-            }
-
-            return yearlyOutcomes.ToArray();
-        }
-
-        public decimal ConvertNumberToDecimal(int number)
-        {
-            return (decimal)number / 100;
         }
 
         public IActionResult Privacy()
