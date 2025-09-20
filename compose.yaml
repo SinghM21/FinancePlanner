@@ -1,0 +1,53 @@
+# Comments are provided throughout this file to help you get started.
+# If you need more help, visit the Docker Compose reference guide at
+# https://docs.docker.com/go/compose-spec-reference/
+
+# Here the instructions define your application as a service called "server".
+# This service is built from the Dockerfile in the current directory.
+# You can add other services your application may depend on here, such as a
+# database or a cache. For examples, see the Awesome Compose repository:
+# https://github.com/docker/awesome-compose
+services:
+  server:
+    build:
+      context: .
+      target: final
+    ports:
+      - 8080:8080
+    environment:
+      # override your connection string so it points to the "db" container
+      - ConnectionStrings__DefaultConnection=Server=db;Database=FinancePlanner;User Id=${dbusername};Password=${dbpassword};TrustServerCertificate=True
+    depends_on:
+      - db
+
+# The commented out section below is an example of how to define a PostgreSQL
+# database that your application can use. `depends_on` tells Docker Compose to
+# start the database before your application. The `db-data` volume persists the
+# database data between container restarts. The `db-password` secret is used
+# to set the database password. You must create `db/password.txt` and add
+# a password of your choosing to it before running `docker compose up`.
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    restart: always
+    environment:
+      SA_PASSWORD: ${dbpassword}
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+
+  migrate:
+    build:
+      context: .
+      target: build   # use SDK image, not final runtime
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=FinancePlanner;User Id=${dbusername};Password=${dbpassword};TrustServerCertificate=True
+    command: sh -c "dotnet ef database update --project FinancePlanner/FinancePlanner.csproj --startup-project FinancePlanner/FinancePlanner.csproj"
+
+volumes:
+  sql_data:
