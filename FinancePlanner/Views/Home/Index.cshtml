@@ -39,15 +39,18 @@
     }
 
     const labels = years;
-
     var incomesArray = [];
+    var outcomesArray =[];
 
     @foreach (var income in Model.yearlyIncome)
     {
         @:incomesArray.push("@income");
     }
 
-    alert(incomesArray);
+    @foreach (var outcome in Model.yearlyOutcome)
+    {
+        @:outcomesArray.push("@outcome");
+    }
 
     new Chart(ctx, {
         type: 'line',
@@ -62,7 +65,7 @@
             },
             {
                 label: 'Outcome',
-                data: incomesArray,
+                data: outcomesArray,
                 fill: false,
                 borderColor: 'rgb(255, 0, 0)',
                 tension: 0.1
