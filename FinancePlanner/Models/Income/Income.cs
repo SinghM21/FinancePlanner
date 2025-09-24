@@ -1,4 +1,4 @@
-﻿namespace FinancePlanner.Models
+﻿namespace FinancePlanner.Models.Income
 {
     public class Income
     {
@@ -8,7 +8,7 @@
 
         public string? Description { get; set; }
 
-        public string? Type { get; set; }
+        public IncomeType Type { get; set; }
 
         public int Amount { get; set; }
     }

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FinancePlanner.Contexts;
-using FinancePlanner.Models;
+using FinancePlanner.Models.Income;
 
 namespace FinancePlanner.Controllers
 {

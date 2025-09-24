@@ -24,7 +24,7 @@ namespace FinancePlanner.Controllers
         public IActionResult Index()
         {
             int currentIncome = _context.Income.Sum(i => i.Amount);
-            int currentOutcome = _context.Outcome.Sum(o => o.Cost);
+            int currentOutcome = _context.Expense.Sum(o => o.Cost);
 
             DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome);
 
@@ -35,7 +35,7 @@ namespace FinancePlanner.Controllers
         public IActionResult Index(DashboardFormValues dashboardFormValues)
         {
             int currentIncome = _context.Income.Sum(i => i.Amount);
-            int currentOutcome = _context.Outcome.Sum(o => o.Cost);
+            int currentOutcome = _context.Expense.Sum(o => o.Cost);
 
             DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome, dashboardFormValues);
 
