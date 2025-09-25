@@ -1,7 +1,11 @@
-﻿namespace FinancePlanner.Models.Expense
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace FinancePlanner.Models.Expense
 {
     public enum ExpenseType
     {
+        [Display(Name = "Please select")]
+        None,
         Food,
         Rent,
         Utilities,

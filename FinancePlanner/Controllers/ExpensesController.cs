@@ -33,14 +33,14 @@ namespace FinancePlanner.Controllers
                 return NotFound();
             }
 
-            var outcome = await _context.Expense
+            var expense = await _context.Expense
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (outcome == null)
+            if (expense == null)
             {
                 return NotFound();
             }
 
-            return View(outcome);
+            return View(expense);
         }
 
         // GET: Outcomes/Create
@@ -54,7 +54,7 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,Quantity,Cost")] Expense expense)
+        public async Task<IActionResult> Create([Bind("ID,Name,Description,Type,Quantity,Cost")] Expense expense)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Quantity,Cost")] Expense expense)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Type,Quantity,Cost")] Expense expense)
         {
             if (id != expense.ID)
             {
@@ -102,7 +102,7 @@ namespace FinancePlanner.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OutcomeExists(expense.ID))
+                    if (!ExpenseExists(expense.ID))
                     {
                         return NotFound();
                     }
@@ -124,14 +124,14 @@ namespace FinancePlanner.Controllers
                 return NotFound();
             }
 
-            var outcome = await _context.Expense
+            var expense = await _context.Expense
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (outcome == null)
+            if (expense == null)
             {
                 return NotFound();
             }
 
-            return View(outcome);
+            return View(expense);
         }
 
         // POST: Outcomes/Delete/5
@@ -139,17 +139,17 @@ namespace FinancePlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var outcome = await _context.Expense.FindAsync(id);
-            if (outcome != null)
+            var expense = await _context.Expense.FindAsync(id);
+            if (expense != null)
             {
-                _context.Expense.Remove(outcome);
+                _context.Expense.Remove(expense);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OutcomeExists(int id)
+        private bool ExpenseExists(int id)
         {
             return _context.Expense.Any(e => e.ID == id);
         }

@@ -1,5 +1,4 @@
 ﻿@using FinancePlanner.Models.Expense
-@using FinancePlanner.Models.Outcome
 @model Expense
 
 @{
@@ -8,7 +7,7 @@
 
 <h1>Create</h1>
 
-<h4>Outcome</h4>
+<h4>Expense</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -33,6 +32,11 @@
                 <label asp-for="Cost" class="control-label"></label>
                 <input asp-for="Cost" class="form-control" />
                 <span asp-validation-for="Cost" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Type" class="control-label"></label>
+                <select asp-for="Type" asp-items="Html.GetEnumSelectList<ExpenseType>()" class="form-control" ></select>
+                <span asp-validation-for="Type" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
