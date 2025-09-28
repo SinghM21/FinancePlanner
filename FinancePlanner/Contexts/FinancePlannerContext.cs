@@ -1,4 +1,5 @@
-﻿using FinancePlanner.Models;
+﻿using FinancePlanner.Models.Expense;
+using FinancePlanner.Models.Income;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinancePlanner.Contexts
@@ -8,8 +9,8 @@ namespace FinancePlanner.Contexts
         public FinancePlannerContext(DbContextOptions<FinancePlannerContext> options) : base(options) { 
         
         }
-        public DbSet<FinancePlanner.Models.Income> Income { get; set; } = default!;
-        public DbSet<FinancePlanner.Models.Outcome> Outcome { get; set; } = default!;
+        public DbSet<Income> Income { get; set; } = default!;
+        public DbSet<Expense> Expense { get; set; } = default!;
         public DbSet<FinancePlanner.Models.Investment> Investment { get; set; } = default!;
 
     }

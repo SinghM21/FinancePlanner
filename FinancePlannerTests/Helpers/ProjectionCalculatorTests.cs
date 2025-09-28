@@ -5,17 +5,32 @@ namespace FinancePlannerTests.Helpers
     public class ProjectionCalculatorTests
     {
         [Fact]
-        public void CalculateYearlyProjectionTest()
+        public void CalculateYearlyProjection_ReturnsCorrectSecondYearValue()
         {
-            decimal[] result = ProjectionCalculator.CalculateYearlyProjection(2, (decimal)0.02);
-            Assert.Equal((decimal)2.04, result[1]);
+            // Arrange
+            int initialValue = 2;
+            decimal growthRate = 0.02m;
+
+            // Act
+            decimal[] projection = ProjectionCalculator.CalculateYearlyProjection(initialValue, growthRate);
+
+            // Assert
+            decimal expectedSecondYearValue = 2.04m;
+            Assert.Equal(expectedSecondYearValue, projection[1]);
         }
 
         [Fact]
-        public void ConvertNumberToDecimalTest()
+        public void ConvertNumberToDecimal_ConvertsIntToDecimal()
         {
-            decimal result = ProjectionCalculator.ConvertNumberToDecimal(20);
-            Assert.Equal((decimal)0.20, result);
+            // Arrange
+            int input = 20;
+
+            // Act
+            decimal result = ProjectionCalculator.ConvertNumberToDecimal(input);
+
+            // Assert
+            decimal expected = 0.20m;
+            Assert.Equal(expected, result);
         }
     }
 }

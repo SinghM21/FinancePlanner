@@ -6,15 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FinancePlanner.Contexts;
-using FinancePlanner.Models;
+using FinancePlanner.Models.Expense;
 
 namespace FinancePlanner.Controllers
 {
-    public class OutcomesController : Controller
+    public class ExpensesController : Controller
     {
         private readonly FinancePlannerContext _context;
 
-        public OutcomesController(FinancePlannerContext context)
+        public ExpensesController(FinancePlannerContext context)
         {
             _context = context;
         }
@@ -22,7 +22,7 @@ namespace FinancePlanner.Controllers
         // GET: Outcomes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Outcome.ToListAsync());
+            return View(await _context.Expense.ToListAsync());
         }
 
         // GET: Outcomes/Details/5
@@ -33,14 +33,14 @@ namespace FinancePlanner.Controllers
                 return NotFound();
             }
 
-            var outcome = await _context.Outcome
+            var expense = await _context.Expense
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (outcome == null)
+            if (expense == null)
             {
                 return NotFound();
             }
 
-            return View(outcome);
+            return View(expense);
         }
 
         // GET: Outcomes/Create
@@ -54,15 +54,15 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,Quantity,Cost")] Outcome outcome)
+        public async Task<IActionResult> Create([Bind("ID,Name,Description,Type,Quantity,Cost")] Expense expense)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(outcome);
+                _context.Add(expense);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(outcome);
+            return View(expense);
         }
 
         // GET: Outcomes/Edit/5
@@ -73,12 +73,12 @@ namespace FinancePlanner.Controllers
                 return NotFound();
             }
 
-            var outcome = await _context.Outcome.FindAsync(id);
-            if (outcome == null)
+            var expense = await _context.Expense.FindAsync(id);
+            if (expense == null)
             {
                 return NotFound();
             }
-            return View(outcome);
+            return View(expense);
         }
 
         // POST: Outcomes/Edit/5
@@ -86,9 +86,9 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Quantity,Cost")] Outcome outcome)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Type,Quantity,Cost")] Expense expense)
         {
-            if (id != outcome.ID)
+            if (id != expense.ID)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace FinancePlanner.Controllers
             {
                 try
                 {
-                    _context.Update(outcome);
+                    _context.Update(expense);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!OutcomeExists(outcome.ID))
+                    if (!ExpenseExists(expense.ID))
                     {
                         return NotFound();
                     }
@@ -113,7 +113,7 @@ namespace FinancePlanner.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(outcome);
+            return View(expense);
         }
 
         // GET: Outcomes/Delete/5
@@ -124,14 +124,14 @@ namespace FinancePlanner.Controllers
                 return NotFound();
             }
 
-            var outcome = await _context.Outcome
+            var expense = await _context.Expense
                 .FirstOrDefaultAsync(m => m.ID == id);
-            if (outcome == null)
+            if (expense == null)
             {
                 return NotFound();
             }
 
-            return View(outcome);
+            return View(expense);
         }
 
         // POST: Outcomes/Delete/5
@@ -139,19 +139,19 @@ namespace FinancePlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var outcome = await _context.Outcome.FindAsync(id);
-            if (outcome != null)
+            var expense = await _context.Expense.FindAsync(id);
+            if (expense != null)
             {
-                _context.Outcome.Remove(outcome);
+                _context.Expense.Remove(expense);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool OutcomeExists(int id)
+        private bool ExpenseExists(int id)
         {
-            return _context.Outcome.Any(e => e.ID == id);
+            return _context.Expense.Any(e => e.ID == id);
         }
     }
 }
