@@ -3,6 +3,7 @@ using FinancePlanner.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinancePlanner.Migrations
 {
     [DbContext(typeof(FinancePlannerContext))]
-    partial class FinancePlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20250928174054_AddReoccuringPropertyToInvestmentModel")]
+    partial class AddReoccuringPropertyToInvestmentModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,7 +79,7 @@ namespace FinancePlanner.Migrations
                     b.ToTable("Income");
                 });
 
-            modelBuilder.Entity("FinancePlanner.Models.Investment.Investment", b =>
+            modelBuilder.Entity("FinancePlanner.Models.Investment", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -100,8 +103,8 @@ namespace FinancePlanner.Migrations
                     b.Property<bool>("Reoccuring")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
+                    b.Property<string>("Type")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
 

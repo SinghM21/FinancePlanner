@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FinancePlanner.Contexts;
-using FinancePlanner.Models;
+using FinancePlanner.Models.Investment;
 
 namespace FinancePlanner.Controllers
 {
@@ -54,7 +54,7 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,Type,Quantity,Cost")] Investment investment)
+        public async Task<IActionResult> Create([Bind("ID,Name,Description,Type,Quantity,Cost,Reoccuring")] Investment investment)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Type,Quantity,Cost")] Investment investment)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Type,Quantity,Cost,Reoccuring")] Investment investment)
         {
             if (id != investment.ID)
             {
