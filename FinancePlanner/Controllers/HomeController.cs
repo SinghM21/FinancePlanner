@@ -26,8 +26,6 @@ namespace FinancePlanner.Controllers
             int currentIncome = _context.Income.Sum(i => i.Amount);
             int currentOutcome = _context.Expense.Sum(o => o.Cost);
 
-            currentOutcome += _context.Investment.Where(inv => inv.Reoccuring == true).Sum(inv => inv.Cost);
-
             DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome);
 
             return View(dashboardViewModel);

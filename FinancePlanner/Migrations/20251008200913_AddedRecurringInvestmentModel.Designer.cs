@@ -4,6 +4,7 @@ using FinancePlanner.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinancePlanner.Migrations
 {
     [DbContext(typeof(FinancePlannerContext))]
-    partial class FinancePlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20251008200913_AddedRecurringInvestmentModel")]
+    partial class AddedRecurringInvestmentModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,6 +94,11 @@ namespace FinancePlanner.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -105,7 +113,9 @@ namespace FinancePlanner.Migrations
 
                     b.ToTable("Investment");
 
-                    b.UseTptMappingStrategy();
+                    b.HasDiscriminator().HasValue("Investment");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("FinancePlanner.Models.Investment.RecurringInvestment", b =>
@@ -124,16 +134,7 @@ namespace FinancePlanner.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.ToTable("RecurringInvestment");
-                });
-
-            modelBuilder.Entity("FinancePlanner.Models.Investment.RecurringInvestment", b =>
-                {
-                    b.HasOne("FinancePlanner.Models.Investment.Investment", null)
-                        .WithOne()
-                        .HasForeignKey("FinancePlanner.Models.Investment.RecurringInvestment", "ID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasDiscriminator().HasValue("RecurringInvestment");
                 });
 #pragma warning restore 612, 618
         }

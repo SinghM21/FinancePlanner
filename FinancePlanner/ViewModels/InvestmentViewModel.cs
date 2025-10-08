@@ -1,9 +1,9 @@
 ﻿using FinancePlanner.Attributes.Validation;
-using FinancePlanner.Models.Income;
+using FinancePlanner.Models.Investment;
 
-namespace FinancePlanner.Models.Investment
+namespace FinancePlanner.ViewModels
 {
-    public class Investment
+    public class InvestmentViewModel
     {
         public int ID { get; set; }
 
@@ -18,5 +18,15 @@ namespace FinancePlanner.Models.Investment
 
         public int Cost { get; set; }
 
+        // Recurring-specific
+        public bool Recurring { get; set; }
+
+        public FrequencyType? Frequency { get; set; }
+
+        public int? FrequencyInDays { get; set; }
+
+        public DateTime? StartDate { get; set; }
+
+        public DateTime? EndDate { get; set; }
     }
 }

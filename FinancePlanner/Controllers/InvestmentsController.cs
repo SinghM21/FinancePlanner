@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FinancePlanner.Contexts;
 using FinancePlanner.Models.Investment;
+using FinancePlanner.ViewModels;
 
 namespace FinancePlanner.Controllers
 {
@@ -46,7 +47,11 @@ namespace FinancePlanner.Controllers
         // GET: Investments/Create
         public IActionResult Create()
         {
-            return View();
+            InvestmentViewModel vm = new()
+            {
+                Name = string.Empty
+            };
+            return View(vm);
         }
 
         // POST: Investments/Create
@@ -54,11 +59,35 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,Type,Quantity,Cost,Reoccuring")] Investment investment)
+        public async Task<IActionResult> Create(InvestmentViewModel investment)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(investment);
+                if (investment.Recurring)
+                {
+                    _context.RecurringInvestment.Add(new RecurringInvestment
+                    {
+                        Name = investment.Name,
+                        Description = investment.Description,
+                        Type = investment.Type,
+                        Quantity = investment.Quantity,
+                        Cost = investment.Cost,
+                        Frequency = investment.Frequency ?? FrequencyType.Monthly,
+                        FrequencyInDays = investment.FrequencyInDays ?? 30,
+                        StartDate = investment.StartDate ?? DateTime.Now,
+                        EndDate = investment.EndDate
+                    });
+                }
+                else {
+                    _context.Investment.Add(new Investment
+                    {
+                        Name = investment.Name,
+                        Description = investment.Description,
+                        Type = investment.Type,
+                        Quantity = investment.Quantity,
+                        Cost = investment.Cost
+                    });
+                }
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
