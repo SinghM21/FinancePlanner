@@ -9,7 +9,6 @@
         Monthly,
         Quarterly,
         SemiAnnually,
-        Annually,
-        Custom
+        Annually
     }
 }
