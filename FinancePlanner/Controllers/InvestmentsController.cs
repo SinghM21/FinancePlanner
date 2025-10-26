@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FinancePlanner.Contexts;
 using FinancePlanner.Models.Investment;
@@ -65,84 +63,177 @@ namespace FinancePlanner.Controllers
             {
                 if (investment.Recurring)
                 {
-                    _context.RecurringInvestment.Add(new RecurringInvestment
+                    var recurringInvestmentEntity = new RecurringInvestment
                     {
                         Name = investment.Name,
                         Description = investment.Description,
                         Type = investment.Type,
                         Quantity = investment.Quantity,
                         Cost = investment.Cost,
-                        Frequency = investment.Frequency ?? FrequencyType.Monthly,
-                        FrequencyInDays = investment.FrequencyInDays ?? 30,
+                        Frequency = investment.Frequency!.Value,
                         StartDate = investment.StartDate ?? DateTime.Now,
                         EndDate = investment.EndDate
-                    });
+                    };
+                    _context.RecurringInvestment.Add(recurringInvestmentEntity);
                 }
-                else {
-                    _context.Investment.Add(new Investment
+                else
+                {
+                    var investmentEntity = new Investment
                     {
                         Name = investment.Name,
                         Description = investment.Description,
                         Type = investment.Type,
                         Quantity = investment.Quantity,
                         Cost = investment.Cost
-                    });
+                    };
+                    _context.Investment.Add(investmentEntity);
                 }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(investment);
         }
 
         // GET: Investments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id == null) return NotFound();
+
+            // try to load recurring entity first
+            var recurringInvestmentEntity = await _context.RecurringInvestment.FindAsync(id);
+            if (recurringInvestmentEntity != null)
             {
-                return NotFound();
+                var vm = new InvestmentViewModel
+                {
+                    ID = recurringInvestmentEntity.ID,
+                    Name = recurringInvestmentEntity.Name,
+                    Description = recurringInvestmentEntity.Description,
+                    Type = recurringInvestmentEntity.Type,
+                    Quantity = recurringInvestmentEntity.Quantity,
+                    Cost = recurringInvestmentEntity.Cost,
+                    Recurring = true,
+                    Frequency = recurringInvestmentEntity.Frequency,
+                    StartDate = recurringInvestmentEntity.StartDate,
+                    EndDate = recurringInvestmentEntity.EndDate
+                };
+                return View(vm);
             }
 
-            var investment = await _context.Investment.FindAsync(id);
-            if (investment == null)
+            // otherwise plain investment
+            var investmentEntity = await _context.Investment.FindAsync(id);
+            if (investmentEntity == null) return NotFound();
+
+            var investmentVm = new InvestmentViewModel
             {
-                return NotFound();
-            }
-            return View(investment);
+                ID = investmentEntity.ID,
+                Name = investmentEntity.Name,
+                Description = investmentEntity.Description,
+                Type = investmentEntity.Type,
+                Quantity = investmentEntity.Quantity,
+                Cost = investmentEntity.Cost,
+                Recurring = false
+            };
+            return View(investmentVm);
         }
 
         // POST: Investments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Type,Quantity,Cost,Reoccuring")] Investment investment)
+        public async Task<IActionResult> Edit(int id, InvestmentViewModel investment)
         {
-            if (id != investment.ID)
-            {
-                return NotFound();
-            }
+            // integrity check: route id must match posted VM id
+            if (investment == null || id != investment.ID) return BadRequest();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(investment);
+
+            try
             {
-                try
+                if (investment.Recurring)
                 {
-                    _context.Update(investment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!InvestmentExists(investment.ID))
+                    // update existing recurring if present
+                    var recurringInvestmentEntity = await _context.RecurringInvestment.FindAsync(id);
+                    if (recurringInvestmentEntity != null)
                     {
-                        return NotFound();
+                        recurringInvestmentEntity.Name = investment.Name;
+                        recurringInvestmentEntity.Description = investment.Description;
+                        recurringInvestmentEntity.Type = investment.Type;
+                        recurringInvestmentEntity.Quantity = investment.Quantity;
+                        recurringInvestmentEntity.Cost = investment.Cost;
+                        recurringInvestmentEntity.Frequency = investment.Frequency!.Value;
+                        recurringInvestmentEntity.StartDate = investment.StartDate ?? DateTime.Now;
+                        recurringInvestmentEntity.EndDate = investment.EndDate;
+
+                        _context.Update(recurringInvestmentEntity);
                     }
                     else
                     {
-                        throw;
+                        // convert plain Investment -> RecurringInvestment
+                        var investmentEntity = await _context.Investment.FindAsync(id);
+                        if (investmentEntity != null)
+                        {
+                            _context.Investment.Remove(investmentEntity);
+                        }
+
+                        var newRecurringInvestment = new RecurringInvestment
+                        {
+                            Name = investment.Name,
+                            Description = investment.Description,
+                            Type = investment.Type,
+                            Quantity = investment.Quantity,
+                            Cost = investment.Cost,
+                            Frequency = investment.Frequency!.Value,
+                            StartDate = investment.StartDate ?? DateTime.Now,
+                            EndDate = investment.EndDate
+                        };
+                        _context.RecurringInvestment.Add(newRecurringInvestment);
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    // non-recurring path: update existing Investment or convert RecurringInvestment -> Investment
+                    var investmentEntity = await _context.Investment.FindAsync(id);
+                    if (investmentEntity != null)
+                    {
+                        investmentEntity.Name = investment.Name;
+                        investmentEntity.Description = investment.Description;
+                        investmentEntity.Type = investment.Type;
+                        investmentEntity.Quantity = investment.Quantity;
+                        investmentEntity.Cost = investment.Cost;
+                        _context.Update(investmentEntity);
+                    }
+                    else
+                    {
+                        var recurringInvestmentEntity = await _context.RecurringInvestment.FindAsync(id);
+                        if (recurringInvestmentEntity != null)
+                        {
+                            _context.RecurringInvestment.Remove(recurringInvestmentEntity);
+                        }
+
+                        var newInvestmentEntity = new Investment
+                        {
+                            Name = investment.Name,
+                            Description = investment.Description,
+                            Type = investment.Type,
+                            Quantity = investment.Quantity,
+                            Cost = investment.Cost
+                        };
+                        _context.Investment.Add(newInvestmentEntity);
+                    }
+                }
+
+                await _context.SaveChangesAsync();
             }
-            return View(investment);
+            catch (DbUpdateConcurrencyException)
+            {
+                bool entityExists = await _context.Investment.AnyAsync(e => e.ID == id) ||
+                                    await _context.RecurringInvestment.AnyAsync(e => e.ID == id);
+                if (!entityExists) return NotFound();
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Investments/Delete/5

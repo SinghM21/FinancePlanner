@@ -1,9 +1,10 @@
 ﻿using FinancePlanner.Attributes.Validation;
 using FinancePlanner.Models.Investment;
+using System.ComponentModel.DataAnnotations;
 
 namespace FinancePlanner.ViewModels
 {
-    public class InvestmentViewModel
+    public class InvestmentViewModel : IValidatableObject
     {
         public int ID { get; set; }
 
@@ -23,10 +24,21 @@ namespace FinancePlanner.ViewModels
 
         public FrequencyType? Frequency { get; set; }
 
-        public int? FrequencyInDays { get; set; }
-
         public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Recurring)
+            {
+                if (Frequency == null || Frequency == FrequencyType.None)
+                {
+                    yield return new ValidationResult(
+                        "Frequency is required for recurring investments.",
+                        new[] { nameof(Frequency) });
+                }
+            }
+        }
     }
 }

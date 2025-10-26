@@ -4,9 +4,7 @@
     {
         public FrequencyType Frequency { get; set; }
 
-        public int? FrequencyInDays { get; set; }
-
-        public DateTime StartDate { get; set; } = DateTime.UtcNow;
+        public DateTime? StartDate { get; set; }
 
         public DateTime? EndDate { get; set; }
     }
