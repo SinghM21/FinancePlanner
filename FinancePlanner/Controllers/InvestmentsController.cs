@@ -152,7 +152,6 @@ namespace FinancePlanner.Controllers
             {
                 if (investment.Recurring)
                 {
-                    // update existing recurring if present
                     var recurringInvestmentEntity = await _context.RecurringInvestment.FindAsync(id);
                     if (recurringInvestmentEntity != null)
                     {
@@ -193,33 +192,39 @@ namespace FinancePlanner.Controllers
                 else
                 {
                     // non-recurring path: update existing Investment or convert RecurringInvestment -> Investment
-                    var investmentEntity = await _context.Investment.FindAsync(id);
-                    if (investmentEntity != null)
+                    var recurringInvestmentEntity = await _context.RecurringInvestment.FindAsync(id);
+                    if (recurringInvestmentEntity != null)
                     {
+                        recurringInvestmentEntity.Name = investment.Name;
+                        recurringInvestmentEntity.Description = investment.Description;
+                        recurringInvestmentEntity.Type = investment.Type;
+                        recurringInvestmentEntity.Quantity = investment.Quantity;
+                        recurringInvestmentEntity.Cost = investment.Cost;
+
+                        await using var tx = await _context.Database.BeginTransactionAsync();
+                        await _context.SaveChangesAsync();
+
+                        // remove derived-row only (TPT)
+                        await _context.Database.ExecuteSqlInterpolatedAsync($"DELETE FROM RecurringInvestment WHERE ID = {id}");
+                        await tx.CommitAsync();
+
+                        _context.Entry(recurringInvestmentEntity).State = EntityState.Detached;
+                    }
+                    else
+                    {
+                        var investmentEntity = await _context.Investment.FindAsync(id);
+                        if (investmentEntity == null)
+                        {
+                            return NotFound();
+                        }
+
                         investmentEntity.Name = investment.Name;
                         investmentEntity.Description = investment.Description;
                         investmentEntity.Type = investment.Type;
                         investmentEntity.Quantity = investment.Quantity;
                         investmentEntity.Cost = investment.Cost;
-                        _context.Update(investmentEntity);
-                    }
-                    else
-                    {
-                        var recurringInvestmentEntity = await _context.RecurringInvestment.FindAsync(id);
-                        if (recurringInvestmentEntity != null)
-                        {
-                            _context.RecurringInvestment.Remove(recurringInvestmentEntity);
-                        }
 
-                        var newInvestmentEntity = new Investment
-                        {
-                            Name = investment.Name,
-                            Description = investment.Description,
-                            Type = investment.Type,
-                            Quantity = investment.Quantity,
-                            Cost = investment.Cost
-                        };
-                        _context.Investment.Add(newInvestmentEntity);
+                        _context.Update(investmentEntity);
                     }
                 }
 
