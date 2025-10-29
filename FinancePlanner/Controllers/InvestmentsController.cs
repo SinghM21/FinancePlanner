@@ -24,24 +24,6 @@ namespace FinancePlanner.Controllers
             return View(await _context.Investment.ToListAsync());
         }
 
-        // GET: Investments/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var investment = await _context.Investment
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (investment == null)
-            {
-                return NotFound();
-            }
-
-            return View(investment);
-        }
-
         // GET: Investments/Create
         public IActionResult Create()
         {
@@ -241,22 +223,26 @@ namespace FinancePlanner.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Investments/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var vm = await LoadInvestmentViewModelAsync(id.Value);
+            if (vm == null) return NotFound();
+
+            return View(vm);
+        }
+
         // GET: Investments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var investment = await _context.Investment
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (investment == null)
-            {
-                return NotFound();
-            }
+            var vm = await LoadInvestmentViewModelAsync(id.Value);
+            if (vm == null) return NotFound();
 
-            return View(investment);
+            return View(vm);
         }
 
         // POST: Investments/Delete/5
@@ -264,19 +250,58 @@ namespace FinancePlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var investment = await _context.Investment.FindAsync(id);
-            if (investment != null)
+            var recurring = await _context.RecurringInvestment.FindAsync(id);
+            if (recurring != null)
             {
-                _context.Investment.Remove(investment);
+                _context.RecurringInvestment.Remove(recurring);
+            }
+            else
+            {
+                var investment = await _context.Investment.FindAsync(id);
+                if (investment != null)
+                {
+                    _context.Investment.Remove(investment);
+                }
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool InvestmentExists(int id)
+        // map DB entity -> ViewModel
+        private async Task<InvestmentViewModel?> LoadInvestmentViewModelAsync(int id)
         {
-            return _context.Investment.Any(e => e.ID == id);
+            var recurring = await _context.RecurringInvestment.FindAsync(id);
+            if (recurring != null)
+            {
+                return new InvestmentViewModel
+                {
+                    ID = recurring.ID,
+                    Name = recurring.Name,
+                    Description = recurring.Description,
+                    Type = recurring.Type,
+                    Quantity = recurring.Quantity,
+                    Cost = recurring.Cost,
+                    Recurring = true,
+                    Frequency = recurring.Frequency,
+                    StartDate = recurring.StartDate,
+                    EndDate = recurring.EndDate
+                };
+            }
+
+            var investment = await _context.Investment.FindAsync(id);
+            if (investment == null) return null;
+
+            return new InvestmentViewModel
+            {
+                ID = investment.ID,
+                Name = investment.Name,
+                Description = investment.Description,
+                Type = investment.Type,
+                Quantity = investment.Quantity,
+                Cost = investment.Cost,
+                Recurring = false
+            };
         }
     }
 }
