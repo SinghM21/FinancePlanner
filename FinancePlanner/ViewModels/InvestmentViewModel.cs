@@ -8,7 +8,7 @@ namespace FinancePlanner.ViewModels
     {
         public int ID { get; set; }
 
-        public required string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         public string? Description { get; set; }
 
