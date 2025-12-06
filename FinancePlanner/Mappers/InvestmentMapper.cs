@@ -1,94 +1,125 @@
-﻿using FinancePlanner.Models.Investment;
+﻿using System;
+using FinancePlanner.DTOs;
+using FinancePlanner.Models.Investment;
 using FinancePlanner.ViewModels;
 
 namespace FinancePlanner.Mappers
 {
     public class InvestmentMapper : IInvestmentMapper
     {
-        public InvestmentViewModel MapToViewModel(Investment investment)
+        public InvestmentDto MapToDTO(InvestmentViewModel viewModel)
         {
-            var vm = new InvestmentViewModel();
-            CopyInvestmentPropertiesToViewModel(investment, vm);
+            var dto = new InvestmentDto
+            {
+                Name = viewModel.Name,
+                Description = viewModel.Description,
+                Type = viewModel.Type,
+                Quantity = viewModel.Quantity,
+                Cost = viewModel.Cost,
+                Recurring = viewModel.Recurring,
+                Frequency = viewModel.Frequency,
+                StartDate = viewModel.StartDate,
+                EndDate = viewModel.EndDate
+            };
+            return dto;
+        }
+
+        public InvestmentDto MapToDTO(Investment investment)
+        {
+            var dto = new InvestmentDto
+            {
+                Name = investment.Name,
+                Description = investment.Description,
+                Type = investment.Type,
+                Quantity = investment.Quantity,
+                Cost = investment.Cost
+            };
 
             if (investment is RecurringInvestment recurringInvestment)
             {
-                vm.Recurring = true;
-                CopyRecurringInvestmentPropertiesToViewModel(recurringInvestment, vm);
+                dto.Recurring = true;
+                dto.Frequency = recurringInvestment.Frequency;
+                dto.StartDate = recurringInvestment.StartDate;
+                dto.EndDate = recurringInvestment.EndDate;
             }
             else
             {
-                vm.Recurring = false;
+                dto.Recurring = false;
             }
 
+            return dto;
+        }
+
+        public InvestmentViewModel MapToViewModel(InvestmentDto investmentDto)
+        {
+            var vm = new InvestmentViewModel
+            {
+                Name = investmentDto.Name,
+                Description = investmentDto.Description,
+                Type = investmentDto.Type,
+                Quantity = investmentDto.Quantity,
+                Cost = investmentDto.Cost,
+                Recurring = investmentDto.Recurring,
+                Frequency = investmentDto.Frequency,
+                StartDate = investmentDto.StartDate,
+                EndDate = investmentDto.EndDate
+            };
             return vm;
         }
 
-        public Investment MapToInvestmentEntity(InvestmentViewModel investmentViewModel)
-        {
-            if (investmentViewModel.Recurring)
+        public Investment MapToInvestmentEntity(InvestmentDto investmentDto)
+        { 
+            Investment investment;
+            if (investmentDto.Recurring)
             {
-                var recurring = new RecurringInvestment();
-                CopyInvestmentPropertiesToEntity(investmentViewModel, recurring, setId: true);
-                CopyRecurringInvestmentPropertiesToEntity(investmentViewModel, recurring);
-                return recurring;
+                EnsureFrequencyForRecurring(investmentDto.Recurring, investmentDto.Frequency, "MapEntityFromDTO");
+                var recurringInvestment = new RecurringInvestment
+                {
+                    Frequency = investmentDto.Frequency!.Value,
+                    StartDate = investmentDto.StartDate,
+                    EndDate = investmentDto.EndDate
+                };
+                investment = recurringInvestment;
             }
             else
             {
-                var investment = new Investment();
-                CopyInvestmentPropertiesToEntity(investmentViewModel, investment, setId: true);
-                return investment;
+                investment = new Investment();
             }
+
+            investment.Name = investmentDto.Name;
+            investment.Description = investmentDto.Description;
+            investment.Type = investmentDto.Type;
+            investment.Quantity = investmentDto.Quantity;
+            investment.Cost = investmentDto.Cost;
+            return investment;
         }
 
-        public Investment UpdateEntityFromViewModel(Investment investment, InvestmentViewModel investmentViewModel)
+        public Investment UpdateEntityFromDTO(Investment investment, InvestmentDto investmentDto)
         {
-            CopyInvestmentPropertiesToEntity(investmentViewModel, investment, setId: false);
+            investment.Name = investmentDto.Name;
+            investment.Description = investmentDto.Description;
+            investment.Type = investmentDto.Type;
+            investment.Quantity = investmentDto.Quantity;
+            investment.Cost = investmentDto.Cost;
 
-            if (investmentViewModel.Recurring && investment is RecurringInvestment recurringInvestment)
+            if (investmentDto.Recurring && investment is RecurringInvestment recurringInvestment)
             {
-                CopyRecurringInvestmentPropertiesToEntity(investmentViewModel, recurringInvestment);
+                EnsureFrequencyForRecurring(investmentDto.Recurring, investmentDto.Frequency, "UpdateEntityFromDTO");
+                recurringInvestment.Frequency = investmentDto.Frequency!.Value;
+                recurringInvestment.StartDate = investmentDto.StartDate;
+                recurringInvestment.EndDate = investmentDto.EndDate;
                 return recurringInvestment;
             }
 
             return investment;
         }
 
-        private static void CopyInvestmentPropertiesToViewModel(Investment entity, InvestmentViewModel vm)
+        private static void EnsureFrequencyForRecurring(bool recurring, FrequencyType? frequency, string source)
         {
-            vm.ID = entity.ID;
-            vm.Name = entity.Name;
-            vm.Description = entity.Description;
-            vm.Type = entity.Type;
-            vm.Quantity = entity.Quantity;
-            vm.Cost = entity.Cost;
-        }
-
-        private static void CopyRecurringInvestmentPropertiesToViewModel(RecurringInvestment entity, InvestmentViewModel vm)
-        {
-            vm.Frequency = entity.Frequency;
-            vm.StartDate = entity.StartDate;
-            vm.EndDate = entity.EndDate;
-        }
-
-        private static void CopyInvestmentPropertiesToEntity(InvestmentViewModel vm, Investment entity, bool setId)
-        {
-            if (setId)
+            if (recurring && frequency == null)
             {
-                entity.ID = vm.ID;
+                throw new ArgumentException($"Frequency is required for recurring investments (source: {source}).");
             }
-
-            entity.Name = vm.Name;
-            entity.Description = vm.Description;
-            entity.Type = vm.Type;
-            entity.Quantity = vm.Quantity;
-            entity.Cost = vm.Cost;
-        }
-
-        private static void CopyRecurringInvestmentPropertiesToEntity(InvestmentViewModel vm, RecurringInvestment entity)
-        {
-            entity.Frequency = vm.Frequency ?? FrequencyType.None;
-            entity.StartDate = vm.StartDate;
-            entity.EndDate = vm.EndDate;
         }
     }
 }

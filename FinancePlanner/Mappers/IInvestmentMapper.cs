@@ -1,12 +1,15 @@
-﻿using FinancePlanner.Models.Investment;
+﻿using FinancePlanner.DTOs;
+using FinancePlanner.Models.Investment;
 using FinancePlanner.ViewModels;
 
 namespace FinancePlanner.Mappers
 {
     public interface IInvestmentMapper
     {
-        InvestmentViewModel MapToViewModel(Investment investment);
-        Investment MapToInvestmentEntity(InvestmentViewModel investmentViewModel);
-        Investment UpdateEntityFromViewModel(Investment investment, InvestmentViewModel investmentViewModel);
+        InvestmentDto MapToDTO(InvestmentViewModel viewModel);
+        InvestmentDto MapToDTO(Investment investment);
+        InvestmentViewModel MapToViewModel(InvestmentDto investmentDto);
+        Investment MapToInvestmentEntity(InvestmentDto investmentDto);
+        Investment UpdateEntityFromDTO(Investment investment, InvestmentDto investmentDto);
     }
 }
