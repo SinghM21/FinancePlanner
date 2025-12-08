@@ -1,6 +1,7 @@
 ﻿using FinancePlanner.Contexts;
 using FinancePlanner.DTOs;
 using FinancePlanner.Mappers;
+using FinancePlanner.Models.Investment;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinancePlanner.Services
@@ -9,28 +10,35 @@ namespace FinancePlanner.Services
     {
         FinancePlannerContext _context;
         IInvestmentMapper _investmentMapper;
-        public InvestmentService(FinancePlannerContext context, IInvestmentMapper investmentMapper) { 
+        public InvestmentService(FinancePlannerContext context, IInvestmentMapper investmentMapper)
+        {
             _context = context;
             _investmentMapper = investmentMapper;
         }
 
-        public Task<InvestmentDto> CreateInvestmentAsync(InvestmentDto investmentDto)
+        public async Task CreateInvestmentAsync(InvestmentDto investmentDto)
         {
-            throw new NotImplementedException();
+            Investment investment = _investmentMapper.MapToInvestmentEntity(investmentDto);
+            await _context.Investment.AddAsync(investment);
+            await _context.SaveChangesAsync();
         }
 
-        public Task<bool> DeleteInvestmentAsync(int id)
+        public async Task<bool> DeleteInvestmentAsync(int id)
         {
-            throw new NotImplementedException();
+            var rowsAffected = await _context.Investment
+                .Where(e => e.ID == id)
+                .ExecuteDeleteAsync();
+
+            return rowsAffected > 0;
         }
 
         public async Task<IReadOnlyList<InvestmentDto>> GetAllInvestmentsAsync()
         {
-            var entities = await _context.Investment
+            var investments = await _context.Investment
                                  .AsNoTracking()
                                  .ToListAsync();
 
-            var investmentDTOs = entities
+            var investmentDTOs = investments
                 .Select(e => _investmentMapper.MapToDTO(e))
                 .ToList()
                 .AsReadOnly();
@@ -38,14 +46,33 @@ namespace FinancePlanner.Services
             return investmentDTOs;
         }
 
-        public Task<InvestmentDto?> GetInvestmentByIdAsync(int id)
+        public async Task<InvestmentDto?> GetInvestmentByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var investment = await _context.Investment
+                                 .AsNoTracking()
+                                 .FirstOrDefaultAsync(e => e.ID == id);
+
+            if (investment == null)
+            {
+                return null;
+            }
+            return _investmentMapper.MapToDTO(investment);
         }
 
-        public Task<InvestmentDto?> UpdateInvestmentAsync(int id, InvestmentDto investmentDto)
+        public async Task<InvestmentDto?> UpdateInvestmentAsync(int id, InvestmentDto investmentDto)
         {
-            throw new NotImplementedException();
+            var investment = await _context.Investment
+                     .FirstOrDefaultAsync(e => e.ID == id);
+
+            if (investment == null)
+            {
+                return null;
+            }
+
+            _investmentMapper.UpdateEntityFromDTO(investment, investmentDto);
+            await _context.SaveChangesAsync();
+
+            return _investmentMapper.MapToDTO(investment);
         }
     }
 }
