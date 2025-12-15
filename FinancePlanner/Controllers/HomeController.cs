@@ -36,8 +36,11 @@ namespace FinancePlanner.Controllers
 
         private int AddRecurringInvestmentCostsToOutcome(int currentOutcome)
         {
-            var recurringInvestments = _context.Investment.OfType<RecurringInvestment>().ToList();
-            currentOutcome += recurringInvestments.Sum(ri => ri.Cost * FrequencyTypeHelper.GetAnnualMultiplier(ri.Frequency));
+            var recurringInvestments = _context.Investment.Where(i => i.Recurring).ToList();
+            if (recurringInvestments.Any())
+            {
+                currentOutcome += recurringInvestments.Sum(ri => ri.Cost * FrequencyTypeHelper.GetAnnualMultiplier(ri.Frequency!.Value));
+            }
             return currentOutcome;
         }
 

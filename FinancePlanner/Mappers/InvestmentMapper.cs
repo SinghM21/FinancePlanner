@@ -32,21 +32,12 @@ namespace FinancePlanner.Mappers
                 Description = investment.Description,
                 Type = investment.Type,
                 Quantity = investment.Quantity,
-                Cost = investment.Cost
+                Cost = investment.Cost,
+                Recurring = investment.Recurring,
+                Frequency = investment.Frequency,
+                StartDate = investment.StartDate,
+                EndDate = investment.EndDate
             };
-
-            if (investment is RecurringInvestment recurringInvestment)
-            {
-                dto.Recurring = true;
-                dto.Frequency = recurringInvestment.Frequency;
-                dto.StartDate = recurringInvestment.StartDate;
-                dto.EndDate = recurringInvestment.EndDate;
-            }
-            else
-            {
-                dto.Recurring = false;
-            }
-
             return dto;
         }
 
@@ -68,29 +59,19 @@ namespace FinancePlanner.Mappers
         }
 
         public Investment MapToInvestmentEntity(InvestmentDto investmentDto)
-        { 
-            Investment investment;
-            if (investmentDto.Recurring)
+        {
+            Investment investment = new Investment
             {
-                EnsureFrequencyForRecurring(investmentDto.Recurring, investmentDto.Frequency, "MapEntityFromDTO");
-                var recurringInvestment = new RecurringInvestment
-                {
-                    Frequency = investmentDto.Frequency!.Value,
-                    StartDate = investmentDto.StartDate,
-                    EndDate = investmentDto.EndDate
-                };
-                investment = recurringInvestment;
-            }
-            else
-            {
-                investment = new Investment();
-            }
-
-            investment.Name = investmentDto.Name;
-            investment.Description = investmentDto.Description;
-            investment.Type = investmentDto.Type;
-            investment.Quantity = investmentDto.Quantity;
-            investment.Cost = investmentDto.Cost;
+                Name = investmentDto.Name,
+                Description = investmentDto.Description,
+                Type = investmentDto.Type,
+                Quantity = investmentDto.Quantity,
+                Cost = investmentDto.Cost,
+                Recurring = investmentDto.Recurring,
+                Frequency = investmentDto.Frequency,
+                StartDate = investmentDto.StartDate,
+                EndDate = investmentDto.EndDate
+            };
             return investment;
         }
 
@@ -101,15 +82,10 @@ namespace FinancePlanner.Mappers
             investment.Type = investmentDto.Type;
             investment.Quantity = investmentDto.Quantity;
             investment.Cost = investmentDto.Cost;
-
-            if (investmentDto.Recurring && investment is RecurringInvestment recurringInvestment)
-            {
-                EnsureFrequencyForRecurring(investmentDto.Recurring, investmentDto.Frequency, "UpdateEntityFromDTO");
-                recurringInvestment.Frequency = investmentDto.Frequency!.Value;
-                recurringInvestment.StartDate = investmentDto.StartDate;
-                recurringInvestment.EndDate = investmentDto.EndDate;
-                return recurringInvestment;
-            }
+            investment.Recurring = investmentDto.Recurring;
+            investment.Frequency = investmentDto.Frequency!.Value;
+            investment.StartDate = investmentDto.StartDate;
+            investment.EndDate = investmentDto.EndDate;
 
             return investment;
         }

@@ -14,11 +14,9 @@ namespace FinancePlanner.Contexts
         public DbSet<Income> Income { get; set; } = default!;
         public DbSet<Expense> Expense { get; set; } = default!;
         public DbSet<Investment> Investment { get; set; } = default!;
-        public DbSet<RecurringInvestment> RecurringInvestment { get; set; } = default!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Investment>().UseTptMappingStrategy();
                 
         }
 
