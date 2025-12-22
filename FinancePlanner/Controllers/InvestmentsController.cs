@@ -4,33 +4,35 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FinancePlanner.Contexts;
+using FinancePlanner.Mappers;
 using FinancePlanner.Models.Investment;
+using FinancePlanner.Services;
 using FinancePlanner.ViewModels;
 
 namespace FinancePlanner.Controllers
 {
     public class InvestmentsController : Controller
     {
-        private readonly FinancePlannerContext _context;
+        private readonly IInvestmentMapper _investmentMapper;
+        private readonly IInvestmentService _investmentService;
 
-        public InvestmentsController(FinancePlannerContext context)
+        public InvestmentsController(IInvestmentMapper investmentMapper, IInvestmentService investmentService)
         {
-            _context = context;
+            _investmentMapper = investmentMapper;
+            _investmentService = investmentService;
         }
 
         // GET: Investments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Investment.ToListAsync());
+            var investments = await _investmentService.GetAllInvestmentsAsync();
+            return View(investments);
         }
 
         // GET: Investments/Create
         public IActionResult Create()
         {
-            InvestmentViewModel vm = new()
-            {
-                Name = string.Empty
-            };
+            InvestmentViewModel vm = new();
             return View(vm);
         }
 
@@ -43,21 +45,8 @@ namespace FinancePlanner.Controllers
         {
             if (ModelState.IsValid)
             {
-                var investmentEntity = new Investment
-                {
-                    Name = investment.Name,
-                    Description = investment.Description,
-                    Type = investment.Type,
-                    Quantity = investment.Quantity,
-                    Cost = investment.Cost,
-                    Recurring = investment.Recurring,
-                    Frequency = investment.Frequency ?? null,
-                    StartDate = investment.StartDate ?? DateTime.Now,
-                    EndDate = investment.EndDate ?? null
-                };
-                _context.Investment.Add(investmentEntity);
-
-                await _context.SaveChangesAsync();
+                var investmentDto = _investmentMapper.MapToDTO(investment);
+                await _investmentService.CreateInvestmentAsync(investmentDto);
                 return RedirectToAction(nameof(Index));
             }
             return View(investment);
@@ -68,22 +57,10 @@ namespace FinancePlanner.Controllers
         {
             if (id == null) return NotFound();
 
-            var investmentEntity = await _context.Investment.FindAsync(id);
-            if (investmentEntity == null) return NotFound();
+            var investmentDto = await _investmentService.GetInvestmentByIdAsync(id.Value);
+            if (investmentDto == null) return NotFound();
 
-            var investmentVm = new InvestmentViewModel
-            {
-                ID = investmentEntity.ID,
-                Name = investmentEntity.Name,
-                Description = investmentEntity.Description,
-                Type = investmentEntity.Type,
-                Quantity = investmentEntity.Quantity,
-                Cost = investmentEntity.Cost,
-                Recurring = investmentEntity.Recurring,
-                Frequency = investmentEntity.Frequency ?? null,
-                StartDate = investmentEntity.StartDate ?? null,
-                EndDate = investmentEntity.EndDate ?? null
-            };
+            var investmentVm = _investmentMapper.MapToViewModel(investmentDto);
             return View(investmentVm);
         }
 
@@ -93,28 +70,11 @@ namespace FinancePlanner.Controllers
         public async Task<IActionResult> Edit(int id, InvestmentViewModel investment)
         {
             // integrity check: route id must match posted VM id
-            if (investment == null || id != investment.ID) return BadRequest();
-
+            if (id != investment.ID) return BadRequest();
             if (!ModelState.IsValid) return View(investment);
 
-            var investmentEntity = await _context.Investment.FindAsync(id);
-            if (investmentEntity == null)
-            {
-                return NotFound();
-            }
-
-            investmentEntity.Name = investment.Name;
-            investmentEntity.Description = investment.Description;
-            investmentEntity.Type = investment.Type;
-            investmentEntity.Quantity = investment.Quantity;
-            investmentEntity.Cost = investment.Cost;
-            investmentEntity.Recurring = investment.Recurring;
-            investmentEntity.Frequency = investment.Frequency ?? null;
-            investmentEntity.StartDate = investment.StartDate ?? null;
-            investmentEntity.EndDate = investment.EndDate ?? null;
-
-            _context.Update(investmentEntity);
-            await _context.SaveChangesAsync();
+            var investmentDto = _investmentMapper.MapToDTO(investment);
+            await _investmentService.UpdateInvestmentAsync(id, investmentDto);
             return RedirectToAction(nameof(Index));
         }
 
@@ -123,10 +83,11 @@ namespace FinancePlanner.Controllers
         {
             if (id == null) return NotFound();
 
-            var vm = await LoadInvestmentViewModelAsync(id.Value);
-            if (vm == null) return NotFound();
+            var investmentDto = await _investmentService.GetInvestmentByIdAsync(id.Value);
+            if (investmentDto == null) return NotFound();
 
-            return View(vm);
+            var investmentVm = _investmentMapper.MapToViewModel(investmentDto);
+            return View(investmentVm);
         }
 
         // GET: Investments/Delete/5
@@ -134,10 +95,11 @@ namespace FinancePlanner.Controllers
         {
             if (id == null) return NotFound();
 
-            var vm = await LoadInvestmentViewModelAsync(id.Value);
-            if (vm == null) return NotFound();
+            var investmentDto = await _investmentService.GetInvestmentByIdAsync(id.Value);
+            if (investmentDto == null) return NotFound();
 
-            return View(vm);
+            var investmentVm = _investmentMapper.MapToViewModel(investmentDto);
+            return View(investmentVm);
         }
 
         // POST: Investments/Delete/5
@@ -145,35 +107,11 @@ namespace FinancePlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var investment = await _context.Investment.FindAsync(id);
-            if (investment != null)
+            if (!await _investmentService.DeleteInvestmentAsync(id))
             {
-                _context.Investment.Remove(investment);
+                ModelState.AddModelError("", "An error occurred while deleting the investment");
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        // map DB entity -> ViewModel
-        private async Task<InvestmentViewModel?> LoadInvestmentViewModelAsync(int id)
-        {
-            var investment = await _context.Investment.FindAsync(id);
-            if (investment == null) return null;
-
-            return new InvestmentViewModel
-            {
-                ID = investment.ID,
-                Name = investment.Name,
-                Description = investment.Description,
-                Type = investment.Type,
-                Quantity = investment.Quantity,
-                Cost = investment.Cost,
-                Recurring = investment.Recurring,
-                Frequency = investment.Frequency ?? null,
-                StartDate = investment.StartDate ?? null,
-                EndDate = investment.EndDate ?? null
-            };
         }
     }
 }
