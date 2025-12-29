@@ -41,15 +41,15 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(InvestmentViewModel investment)
+        public async Task<IActionResult> Create(InvestmentViewModel investmentVm)
         {
             if (ModelState.IsValid)
             {
-                var investmentDto = _investmentMapper.MapToDTO(investment);
+                var investmentDto = _investmentMapper.MapToDTO(investmentVm);
                 await _investmentService.CreateInvestmentAsync(investmentDto);
                 return RedirectToAction(nameof(Index));
             }
-            return View(investment);
+            return View(investmentVm);
         }
 
         // GET: Investments/Edit/5
@@ -67,13 +67,13 @@ namespace FinancePlanner.Controllers
         // POST: Investments/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, InvestmentViewModel investment)
+        public async Task<IActionResult> Edit(int id, InvestmentViewModel investmentVm)
         {
             // integrity check: route id must match posted VM id
-            if (id != investment.ID) return BadRequest();
-            if (!ModelState.IsValid) return View(investment);
+            if (id != investmentVm.ID) return BadRequest();
+            if (!ModelState.IsValid) return View(investmentVm);
 
-            var investmentDto = _investmentMapper.MapToDTO(investment);
+            var investmentDto = _investmentMapper.MapToDTO(investmentVm);
             await _investmentService.UpdateInvestmentAsync(id, investmentDto);
             return RedirectToAction(nameof(Index));
         }
