@@ -9,6 +9,8 @@ namespace FinancePlanner.Mappers
     {
         public InvestmentDto MapToDTO(InvestmentViewModel viewModel)
         {
+            ArgumentNullException.ThrowIfNull(viewModel);
+            
             var dto = new InvestmentDto
             {
                 Name = viewModel.Name,
@@ -26,6 +28,8 @@ namespace FinancePlanner.Mappers
 
         public InvestmentDto MapToDTO(Investment investment)
         {
+            ArgumentNullException.ThrowIfNull(investment);
+            
             var dto = new InvestmentDto
             {
                 Name = investment.Name,
@@ -43,6 +47,8 @@ namespace FinancePlanner.Mappers
 
         public InvestmentViewModel MapToViewModel(InvestmentDto investmentDto)
         {
+            ArgumentNullException.ThrowIfNull(investmentDto);
+            
             var vm = new InvestmentViewModel
             {
                 Name = investmentDto.Name,
@@ -60,6 +66,8 @@ namespace FinancePlanner.Mappers
 
         public Investment MapToInvestmentEntity(InvestmentDto investmentDto)
         {
+            ArgumentNullException.ThrowIfNull(investmentDto);
+            
             Investment investment = new Investment
             {
                 Name = investmentDto.Name,
@@ -77,6 +85,10 @@ namespace FinancePlanner.Mappers
 
         public Investment UpdateEntityFromDTO(Investment investment, InvestmentDto investmentDto)
         {
+            ArgumentNullException.ThrowIfNull(investment);
+            ArgumentNullException.ThrowIfNull(investmentDto);
+            EnsureFrequencyForRecurring(investmentDto.Recurring, investmentDto.Frequency, "UpdateEntityFromDTO");
+            
             investment.Name = investmentDto.Name;
             investment.Description = investmentDto.Description;
             investment.Type = investmentDto.Type;
