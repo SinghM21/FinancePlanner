@@ -26,7 +26,12 @@ namespace FinancePlanner.Controllers
         public async Task<IActionResult> Index()
         {
             var investments = await _investmentService.GetAllInvestmentsAsync();
-            return View(investments);
+            
+            IEnumerable<InvestmentViewModel> investmentVms = investments
+                .Select(dto => _investmentMapper.MapToViewModel(dto))
+                .ToList();
+            
+            return View(investmentVms);
         }
 
         // GET: Investments/Create

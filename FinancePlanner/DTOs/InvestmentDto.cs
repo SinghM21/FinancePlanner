@@ -4,6 +4,7 @@ namespace FinancePlanner.DTOs
 {
     public class InvestmentDto
     {
+        public int ID { get; set; }
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public InvestmentType Type { get; set; }

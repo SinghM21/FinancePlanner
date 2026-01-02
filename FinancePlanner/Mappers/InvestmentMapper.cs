@@ -13,6 +13,7 @@ namespace FinancePlanner.Mappers
             
             var dto = new InvestmentDto
             {
+                ID = viewModel.ID,
                 Name = viewModel.Name,
                 Description = viewModel.Description,
                 Type = viewModel.Type,
@@ -32,6 +33,7 @@ namespace FinancePlanner.Mappers
             
             var dto = new InvestmentDto
             {
+                ID = investment.ID,
                 Name = investment.Name,
                 Description = investment.Description,
                 Type = investment.Type,
@@ -51,6 +53,7 @@ namespace FinancePlanner.Mappers
             
             var vm = new InvestmentViewModel
             {
+                ID = investmentDto.ID,
                 Name = investmentDto.Name,
                 Description = investmentDto.Description,
                 Type = investmentDto.Type,

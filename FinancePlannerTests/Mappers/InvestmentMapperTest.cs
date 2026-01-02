@@ -17,6 +17,7 @@ public class InvestmentMapperTest
         //Arrange
         var investmentVm = new InvestmentViewModel()
         {
+            ID = 1,
             Name = "Investment A",
             Description = "Description A",
             Type = InvestmentType.Stocks,
@@ -32,6 +33,7 @@ public class InvestmentMapperTest
         var investmentDto = _investmentMapper.MapToDTO(investmentVm);
 
         //Assert
+        Assert.Equal(investmentVm.ID, investmentDto.ID);
         Assert.Equal(investmentVm.Name, investmentDto.Name);
         Assert.Equal(investmentVm.Description, investmentDto.Description);
         Assert.Equal(investmentVm.Type, investmentDto.Type);
@@ -49,6 +51,7 @@ public class InvestmentMapperTest
         //Arrange
         var investment = new Investment()
         {
+            ID = 1,
             Name = "Investment A",
             Description = "Description A",
             Type = InvestmentType.Stocks,
@@ -64,6 +67,7 @@ public class InvestmentMapperTest
         var investmentDto = _investmentMapper.MapToDTO(investment);
 
         //Assert
+        Assert.Equal(investment.ID, investmentDto.ID);
         Assert.Equal(investment.Name, investmentDto.Name);
         Assert.Equal(investment.Description, investmentDto.Description);
         Assert.Equal(investment.Type, investmentDto.Type);
@@ -81,6 +85,7 @@ public class InvestmentMapperTest
         //Arrange
         var investmentDto = new InvestmentDto()
         {
+            ID = 1,
             Name = "Investment A",
             Description = "Description A",
             Type = InvestmentType.Stocks,
@@ -96,6 +101,7 @@ public class InvestmentMapperTest
         var investmentVm = _investmentMapper.MapToViewModel(investmentDto);
 
         //Assert
+        Assert.Equal(investmentVm.ID, investmentDto.ID);
         Assert.Equal(investmentVm.Name, investmentDto.Name);
         Assert.Equal(investmentVm.Description, investmentDto.Description);
         Assert.Equal(investmentVm.Type, investmentDto.Type);
