@@ -98,7 +98,7 @@ namespace FinancePlanner.Mappers
             investment.Quantity = investmentDto.Quantity;
             investment.Cost = investmentDto.Cost;
             investment.Recurring = investmentDto.Recurring;
-            investment.Frequency = investmentDto.Frequency!.Value;
+            investment.Frequency = investmentDto.Frequency;
             investment.StartDate = investmentDto.StartDate;
             investment.EndDate = investmentDto.EndDate;
 
