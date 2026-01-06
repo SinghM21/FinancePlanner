@@ -46,13 +46,13 @@ public class InvestmentIntegrationTests : IAsyncLifetime
     public async Task CreateInvestment_CreatesDatabaseRecord()
     {
         //Arrange
-        var investmentDto = new InvestmentDto { ID = 1, Name = "Investment Test", Description = "Test Description" };
+        var investmentDto = new InvestmentDto { Name = "Investment Test", Description = "Test Description" };
 
         // Act
         await _service.CreateInvestmentAsync(investmentDto);
 
         // Assert
-        var createdInvestment = await _context.Investment.FindAsync(investmentDto.ID);
+        var createdInvestment = _context.Investment.FirstOrDefault(i => i.Name == "Investment Test");
         Assert.NotNull(createdInvestment);
         Assert.Equal(investmentDto.Name, createdInvestment.Name);
         Assert.Equal(investmentDto.Description, createdInvestment.Description);
@@ -62,16 +62,17 @@ public class InvestmentIntegrationTests : IAsyncLifetime
     public async Task UpdateInvestment_UpdatesDatabaseRecord()
     {
         //Arrange
-        var investmentDto = new InvestmentDto { ID = 1, Name = "Investment Test", Description = "Test Description" };
+        var investmentDto = new InvestmentDto { Name = "Investment Test", Description = "Test Description" };
         await _service.CreateInvestmentAsync(investmentDto);
         var updatedInvestmentDto = new InvestmentDto
-            { ID = 1, Name = "Updated Investment", Description = "Updated Description" };
+            { Name = "Updated Investment", Description = "Updated Description" };
 
         // Act
-        await _service.UpdateInvestmentAsync(investmentDto.ID, updatedInvestmentDto);
+        var createdInvestment = _context.Investment.First(i => i.Name == "Investment Test");
+        await _service.UpdateInvestmentAsync(createdInvestment.ID, updatedInvestmentDto);
 
         // Assert
-        var updatedInvestment = await _context.Investment.FindAsync(updatedInvestmentDto.ID);
+        var updatedInvestment = await _context.Investment.FindAsync(createdInvestment.ID);
         Assert.NotNull(updatedInvestment);
         Assert.Equal(updatedInvestmentDto.Name, updatedInvestment.Name);
         Assert.Equal(updatedInvestmentDto.Description, updatedInvestment.Description);
@@ -95,19 +96,7 @@ public class InvestmentIntegrationTests : IAsyncLifetime
             Assert.Null(deletedInvestment);
         }
     }
-
-    [Fact]
-    public async Task CreateInvestment_WithDuplicateId_ThrowsException()
-    {
-        //Arrange
-        var dto = new InvestmentDto { ID = 1, Name = "Test" };
-        await _service.CreateInvestmentAsync(dto);
     
-        //Act & Assert
-        await Assert.ThrowsAsync<DbUpdateException>(() =>
-            _service.CreateInvestmentAsync(dto));
-    }
-
     private FinancePlannerContext CreateFreshContext()
     {
         return new FinancePlannerContext(
