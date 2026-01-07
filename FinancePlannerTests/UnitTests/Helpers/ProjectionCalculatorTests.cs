@@ -1,6 +1,6 @@
 ﻿using FinancePlanner.Helpers;
 
-namespace FinancePlannerTests.Helpers
+namespace FinancePlannerTests.UnitTests.Helpers
 {
     public class ProjectionCalculatorTests
     {

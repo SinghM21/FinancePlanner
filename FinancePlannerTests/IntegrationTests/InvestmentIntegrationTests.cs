@@ -5,7 +5,8 @@ using FinancePlanner.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
+
+namespace FinancePlannerTests.IntegrationTests;
 
 public class InvestmentIntegrationTests : IAsyncLifetime
 {

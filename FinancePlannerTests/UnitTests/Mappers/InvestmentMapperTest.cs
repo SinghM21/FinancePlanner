@@ -4,7 +4,7 @@ using FinancePlanner.Models.Investment;
 using FinancePlanner.ViewModels;
 using JetBrains.Annotations;
 
-namespace FinancePlannerTests.Mappers;
+namespace FinancePlannerTests.UnitTests.Mappers;
 
 [TestSubject(typeof(InvestmentMapper))]
 public class InvestmentMapperTest
