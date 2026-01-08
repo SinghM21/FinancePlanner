@@ -1,6 +1,8 @@
 ﻿using FinancePlanner.Models.Expense;
 using FinancePlanner.Models.Income;
+using FinancePlanner.Models.Investment;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata;
 
 namespace FinancePlanner.Contexts
 {
@@ -11,7 +13,12 @@ namespace FinancePlanner.Contexts
         }
         public DbSet<Income> Income { get; set; } = default!;
         public DbSet<Expense> Expense { get; set; } = default!;
-        public DbSet<FinancePlanner.Models.Investment> Investment { get; set; } = default!;
+        public DbSet<Investment> Investment { get; set; } = default!;
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+                
+        }
 
     }
 }

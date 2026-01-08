@@ -1,52 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using FinancePlanner.Contexts;
-using FinancePlanner.Models;
+using FinancePlanner.Mappers;
+using FinancePlanner.Models.Investment;
+using FinancePlanner.Services;
+using FinancePlanner.ViewModels;
 
 namespace FinancePlanner.Controllers
 {
     public class InvestmentsController : Controller
     {
-        private readonly FinancePlannerContext _context;
+        private readonly IInvestmentMapper _investmentMapper;
+        private readonly IInvestmentService _investmentService;
 
-        public InvestmentsController(FinancePlannerContext context)
+        public InvestmentsController(IInvestmentMapper investmentMapper, IInvestmentService investmentService)
         {
-            _context = context;
+            _investmentMapper = investmentMapper;
+            _investmentService = investmentService;
         }
 
         // GET: Investments
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Investment.ToListAsync());
-        }
-
-        // GET: Investments/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var investment = await _context.Investment
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (investment == null)
-            {
-                return NotFound();
-            }
-
-            return View(investment);
+            var investments = await _investmentService.GetAllInvestmentsAsync();
+            
+            IEnumerable<InvestmentViewModel> investmentVms = investments
+                .Select(dto => _investmentMapper.MapToViewModel(dto))
+                .ToList();
+            
+            return View(investmentVms);
         }
 
         // GET: Investments/Create
         public IActionResult Create()
         {
-            return View();
+            InvestmentViewModel vm = new();
+            return View(vm);
         }
 
         // POST: Investments/Create
@@ -54,84 +46,65 @@ namespace FinancePlanner.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Description,Type,Quantity,Cost")] Investment investment)
+        public async Task<IActionResult> Create(InvestmentViewModel investmentVm)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(investment);
-                await _context.SaveChangesAsync();
+                var investmentDto = _investmentMapper.MapToDTO(investmentVm);
+                await _investmentService.CreateInvestmentAsync(investmentDto);
                 return RedirectToAction(nameof(Index));
             }
-            return View(investment);
+            return View(investmentVm);
         }
 
         // GET: Investments/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var investment = await _context.Investment.FindAsync(id);
-            if (investment == null)
-            {
-                return NotFound();
-            }
-            return View(investment);
+            var investmentDto = await _investmentService.GetInvestmentByIdAsync(id.Value);
+            if (investmentDto == null) return NotFound();
+
+            var investmentVm = _investmentMapper.MapToViewModel(investmentDto);
+            return View(investmentVm);
         }
 
         // POST: Investments/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Description,Type,Quantity,Cost")] Investment investment)
+        public async Task<IActionResult> Edit(int id, InvestmentViewModel investmentVm)
         {
-            if (id != investment.ID)
-            {
-                return NotFound();
-            }
+            // integrity check: route id must match posted VM id
+            if (id != investmentVm.ID) return BadRequest();
+            if (!ModelState.IsValid) return View(investmentVm);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(investment);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!InvestmentExists(investment.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(investment);
+            var investmentDto = _investmentMapper.MapToDTO(investmentVm);
+            await _investmentService.UpdateInvestmentAsync(id, investmentDto);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Investments/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var investmentDto = await _investmentService.GetInvestmentByIdAsync(id.Value);
+            if (investmentDto == null) return NotFound();
+
+            var investmentVm = _investmentMapper.MapToViewModel(investmentDto);
+            return View(investmentVm);
         }
 
         // GET: Investments/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var investment = await _context.Investment
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (investment == null)
-            {
-                return NotFound();
-            }
+            var investmentDto = await _investmentService.GetInvestmentByIdAsync(id.Value);
+            if (investmentDto == null) return NotFound();
 
-            return View(investment);
+            var investmentVm = _investmentMapper.MapToViewModel(investmentDto);
+            return View(investmentVm);
         }
 
         // POST: Investments/Delete/5
@@ -139,19 +112,11 @@ namespace FinancePlanner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var investment = await _context.Investment.FindAsync(id);
-            if (investment != null)
+            if (!await _investmentService.DeleteInvestmentAsync(id))
             {
-                _context.Investment.Remove(investment);
+                ModelState.AddModelError("", "An error occurred while deleting the investment");
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool InvestmentExists(int id)
-        {
-            return _context.Investment.Any(e => e.ID == id);
         }
     }
 }

@@ -4,6 +4,7 @@ using FinancePlanner.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FinancePlanner.Migrations
 {
     [DbContext(typeof(FinancePlannerContext))]
-    partial class FinancePlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20251026150358_RemovedPropertiesFromRecurringInvestments")]
+    partial class RemovedPropertiesFromRecurringInvestments
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -91,12 +94,6 @@ namespace FinancePlanner.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("Frequency")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -104,18 +101,39 @@ namespace FinancePlanner.Migrations
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<bool>("Recurring")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("StartDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("ID");
 
                     b.ToTable("Investment");
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("FinancePlanner.Models.Investment.RecurringInvestment", b =>
+                {
+                    b.HasBaseType("FinancePlanner.Models.Investment.Investment");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Frequency")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.ToTable("RecurringInvestment");
+                });
+
+            modelBuilder.Entity("FinancePlanner.Models.Investment.RecurringInvestment", b =>
+                {
+                    b.HasOne("FinancePlanner.Models.Investment.Investment", null)
+                        .WithOne()
+                        .HasForeignKey("FinancePlanner.Models.Investment.RecurringInvestment", "ID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

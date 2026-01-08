@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinancePlanner.Attributes.Validation;
+﻿using FinancePlanner.Attributes.Validation;
 
-namespace FinancePlannerTests.Attributes.Validation
+namespace FinancePlannerTests.UnitTests.Attributes.Validation
 {
     public class NotEnumValueAttributeTests
     {

@@ -1,5 +1,8 @@
 using FinancePlanner.Contexts;
+using FinancePlanner.Mappers;
+using FinancePlanner.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +11,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<FinancePlannerContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// Register mapper and service for DI
+builder.Services.AddScoped<IInvestmentMapper, InvestmentMapper>();
+builder.Services.AddScoped<IInvestmentService, InvestmentService>();
 
 var app = builder.Build();
 

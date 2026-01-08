@@ -1,6 +1,8 @@
 using FinancePlanner.Contexts;
+using FinancePlanner.Helpers;
 using FinancePlanner.Models;
 using FinancePlanner.Models.Dashboard;
+using FinancePlanner.Models.Investment;
 using FinancePlanner.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -25,10 +27,21 @@ namespace FinancePlanner.Controllers
         {
             int currentIncome = _context.Income.Sum(i => i.Amount);
             int currentOutcome = _context.Expense.Sum(o => o.Cost);
+            currentOutcome = AddRecurringInvestmentCostsToOutcome(currentOutcome);
 
             DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome);
 
             return View(dashboardViewModel);
+        }
+
+        private int AddRecurringInvestmentCostsToOutcome(int currentOutcome)
+        {
+            var recurringInvestments = _context.Investment.Where(i => i.Recurring).ToList();
+            if (recurringInvestments.Any())
+            {
+                currentOutcome += recurringInvestments.Sum(ri => ri.Cost * FrequencyTypeHelper.GetAnnualMultiplier(ri.Frequency!.Value));
+            }
+            return currentOutcome;
         }
 
         [HttpPost]

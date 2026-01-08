@@ -363,3 +363,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /.env
+
+# Rider ignored files
+/projectSettingsUpdater.xml
+/.idea
+/modules.xml
+/contentModel.xml
