@@ -10,22 +10,96 @@
 </div>
 
 <div class="row">
-    <div class="col-md-10">
-        <canvas id="myChart"></canvas>
+    <div class="col">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Net Cashflow</h5>
+                <p class="card-text">Net Cashflow</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Net Investments</h5>
+                <p class="card-text">Net Investments</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Net Value</h5>
+                <p class="card-text">Net Value</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col">
+        <div class="card" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Goal Progress</h5>
+                <p class="card-text">Goal Progress</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+        </div>
     </div>
 </div>
+<hr/>
+<div class="row">
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="projection-tab" data-bs-toggle="tab" data-bs-target="#projection-tab-pane" type="button" role="tab" aria-controls="projection-tab-pane" aria-selected="true">Projection</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="second-tab" data-bs-toggle="tab" data-bs-target="#second-tab-pane" type="button" role="tab" aria-controls="second-tab-pane" aria-selected="false">..</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="third-tab" data-bs-toggle="tab" data-bs-target="#third-tab-pane" type="button" role="tab" aria-controls="third-tab-pane" aria-selected="false">...</button>
+        </li>
 
-@using (Html.BeginForm("Index", "Home", FormMethod.Post))
-{
-    <div>
-        <label>Expected Income Increase:</label>
-        <input type="number" id="IncomeProjectionIncreaseNumber" name="IncomeProjectionIncreaseNumber" min="0" max="100" />
-        <br />
-        <label>Expected Outcome Increase:</label>
-        <input type="number" id="OutcomeProjectionIncreaseNumber" name="OutcomeProjectionIncreaseNumber" min="0" max="100" />
-        <input type="submit" />
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="projection-tab-pane" role="tabpanel" aria-labelledby="projection-tab" tabindex="0">
+            <div class="col-md-12" style="height: 400px;">
+                <canvas id="myChart"></canvas>
+            </div>
+            
+            @using (Html.BeginForm("Index", "Home", FormMethod.Post))
+            {
+                <div>
+                    <label>Expected Income Increase:</label>
+                    <input type="number" id="IncomeProjectionIncreaseNumber" name="IncomeProjectionIncreaseNumber" min="0"
+                           max="100"/>
+                    <br/>
+                    <label>Expected Outcome Increase:</label>
+                    <input type="number" id="OutcomeProjectionIncreaseNumber" name="OutcomeProjectionIncreaseNumber" min="0"
+                           max="100"/>
+                    <input type="submit"/>
+                </div>
+            }
+        </div>
+        <div class="tab-pane fade" id="second-tab-pane" role="tabpanel" aria-labelledby="second-tab" tabindex="0">..</div>
+        <div class="tab-pane fade" id="third-tab-pane" role="tabpanel" aria-labelledby="third-tab" tabindex="0">...</div>
     </div>
-}
+</div>
+<hr/>
+<div class="row">
+    <div class="col">
+        Column
+    </div>
+    <div class="col">
+        Column
+    </div>
+    <div class="col">
+        Column
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -35,12 +109,12 @@
     var years = []
 
     for (var i = min; i <= max; i++) {
-      years.push(i)
+        years.push(i)
     }
 
     const labels = years;
     var incomesArray = [];
-    var outcomesArray =[];
+    var outcomesArray = [];
 
     @foreach (var income in Model.yearlyIncome)
     {
@@ -63,13 +137,13 @@
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
             },
-            {
-                label: 'Outcome',
-                data: outcomesArray,
-                fill: false,
-                borderColor: 'rgb(255, 0, 0)',
-                tension: 0.1
-            }
+                {
+                    label: 'Outcome',
+                    data: outcomesArray,
+                    fill: false,
+                    borderColor: 'rgb(255, 0, 0)',
+                    tension: 0.1
+                }
             ]
         },
         options: {
@@ -82,8 +156,7 @@
                 }
             },
             scales: {
-                y: {
-                }
+                y: {}
             }
         }
     });
