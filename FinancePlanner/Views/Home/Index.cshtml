@@ -5,47 +5,42 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to your financial future</h1>
-
+    <h1 class="display-4" style="margin-bottom: 20px;">Welcome to your financial future</h1>
 </div>
 
 <div class="row">
     <div class="col">
         <div class="card" style="width: 18rem;">
             <div class="card-body">
-                <h5 class="card-title">Net Cashflow</h5>
-                <p class="card-text">Net Cashflow</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title">Income</h5>
+                <p>$$$</p>
             </div>
         </div>
     </div>
-    
+
     <div class="col">
         <div class="card" style="width: 18rem;">
             <div class="card-body">
-                <h5 class="card-title">Net Investments</h5>
-                <p class="card-text">Net Investments</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title">Expenses</h5>
+                <p>$$$</p>
             </div>
         </div>
     </div>
-    
+
     <div class="col">
         <div class="card" style="width: 18rem;">
             <div class="card-body">
-                <h5 class="card-title">Net Value</h5>
-                <p class="card-text">Net Value</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title">Remaining</h5>
+                <p>$$$</p>
             </div>
         </div>
     </div>
-    
+
     <div class="col">
         <div class="card" style="width: 18rem;">
             <div class="card-body">
-                <h5 class="card-title">Goal Progress</h5>
-                <p class="card-text">Goal Progress</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+                <h5 class="card-title">Goal</h5>
+                <p>$$$</p>
             </div>
         </div>
     </div>
@@ -54,38 +49,61 @@
 <div class="row">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="projection-tab" data-bs-toggle="tab" data-bs-target="#projection-tab-pane" type="button" role="tab" aria-controls="projection-tab-pane" aria-selected="true">Projection</button>
+            <button class="nav-link active" id="projection-tab" data-bs-toggle="tab"
+                    data-bs-target="#projection-tab-pane" type="button" role="tab" aria-controls="projection-tab-pane"
+                    aria-selected="true">Projection
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="second-tab" data-bs-toggle="tab" data-bs-target="#second-tab-pane" type="button" role="tab" aria-controls="second-tab-pane" aria-selected="false">..</button>
+            <button class="nav-link" id="second-tab" data-bs-toggle="tab" data-bs-target="#second-tab-pane"
+                    type="button" role="tab" aria-controls="second-tab-pane" aria-selected="false">Cashflow
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="third-tab" data-bs-toggle="tab" data-bs-target="#third-tab-pane" type="button" role="tab" aria-controls="third-tab-pane" aria-selected="false">...</button>
+            <button class="nav-link" id="third-tab" data-bs-toggle="tab" data-bs-target="#third-tab-pane" type="button"
+                    role="tab" aria-controls="third-tab-pane" aria-selected="false">Spending
+            </button>
         </li>
 
     </ul>
-    <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="projection-tab-pane" role="tabpanel" aria-labelledby="projection-tab" tabindex="0">
-            <div class="col-md-12" style="height: 400px;">
-                <canvas id="myChart"></canvas>
+    <div class="tab-content" id="myTabContent" style="height: 470px;">
+        <div class="tab-pane fade show active" id="projection-tab-pane" role="tabpanel" aria-labelledby="projection-tab"
+             tabindex="0">
+            <div class="row">
+                <div class="col-md-9" style="height: 400px;">
+                    <canvas id="myChart"></canvas>
+                </div>
+
+                <div class="col-md-3">
+                    <div class=card>
+                        <div class="card-body">
+                            <h5 class="card-title">Projection Settings</h5>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
             @using (Html.BeginForm("Index", "Home", FormMethod.Post))
             {
                 <div>
                     <label>Expected Income Increase:</label>
-                    <input type="number" id="IncomeProjectionIncreaseNumber" name="IncomeProjectionIncreaseNumber" min="0"
+                    <input type="number" id="IncomeProjectionIncreaseNumber"
+                           name="IncomeProjectionIncreaseNumber"
+                           min="0"
                            max="100"/>
                     <br/>
                     <label>Expected Outcome Increase:</label>
-                    <input type="number" id="OutcomeProjectionIncreaseNumber" name="OutcomeProjectionIncreaseNumber" min="0"
+                    <input type="number" id="OutcomeProjectionIncreaseNumber"
+                           name="OutcomeProjectionIncreaseNumber"
+                           min="0"
                            max="100"/>
                     <input type="submit"/>
                 </div>
             }
         </div>
-        <div class="tab-pane fade" id="second-tab-pane" role="tabpanel" aria-labelledby="second-tab" tabindex="0">..</div>
-        <div class="tab-pane fade" id="third-tab-pane" role="tabpanel" aria-labelledby="third-tab" tabindex="0">...</div>
+        <div class="tab-pane fade" id="second-tab-pane" role="tabpanel" aria-labelledby="second-tab" tabindex="0">..
+        </div>
+        <div class="tab-pane fade" id="third-tab-pane" role="tabpanel" aria-labelledby="third-tab" tabindex="0">...
+        </div>
     </div>
 </div>
 <hr/>
