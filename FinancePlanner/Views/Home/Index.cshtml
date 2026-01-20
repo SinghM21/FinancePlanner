@@ -13,7 +13,7 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">Income</h5>
-                <p>$$$</p>
+                <p>@Model.CurrentIncome</p>
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">Expenses</h5>
-                <p>$$$</p>
+                <p>@Model.CurrentOutcome</p>
             </div>
         </div>
     </div>
@@ -31,7 +31,7 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">Remaining</h5>
-                <p>$$$</p>
+                <p>@Model.NetIncome</p>
             </div>
         </div>
     </div>
@@ -40,7 +40,13 @@
         <div class="card" style="width: 18rem;">
             <div class="card-body">
                 <h5 class="card-title">Goal</h5>
-                <p>$$$</p>
+                <p id="goalDisplay"></p>
+                <select id="goalSelect" class="form-select">
+                    <option value="">Select a goal</option>
+                    <option value="budget">Budget</option>
+                    <option value="invest">Invest</option>
+                    <option value="save">Save</option>
+                </select>
             </div>
         </div>
     </div>
@@ -121,61 +127,78 @@
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('myChart');
-    var min = new Date().getFullYear()
-    var max = min + 10
-    var years = []
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('myChart');
+        var min = new Date().getFullYear()
+        var max = min + 10
+        var years = []
 
-    for (var i = min; i <= max; i++) {
-        years.push(i)
-    }
-
-    const labels = years;
-    var incomesArray = [];
-    var outcomesArray = [];
-
-    @foreach (var income in Model.yearlyIncome)
-    {
-        @:incomesArray.push("@income");
-    }
-
-    @foreach (var outcome in Model.yearlyOutcome)
-    {
-        @:outcomesArray.push("@outcome");
-    }
-
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Income',
-                data: incomesArray,
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            },
-                {
-                    label: 'Outcome',
-                    data: outcomesArray,
-                    fill: false,
-                    borderColor: 'rgb(255, 0, 0)',
-                    tension: 0.1
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                title: {
-                    display: true,
-                    text: '10 Year Portfolio Projection'
-                }
-            },
-            scales: {
-                y: {}
-            }
+        for (var i = min; i <= max; i++) {
+            years.push(i)
         }
+
+        const labels = years;
+        var incomesArray = [];
+        var outcomesArray = [];
+
+        @foreach (var income in Model.YearlyIncome)
+        {
+            @:incomesArray.push("@income");
+        }
+
+        @foreach (var outcome in Model.YearlyOutcome)
+        {
+            @:outcomesArray.push("@outcome");
+        }
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Income',
+                    data: incomesArray,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                },
+                    {
+                        label: 'Outcome',
+                        data: outcomesArray,
+                        fill: false,
+                        borderColor: 'rgb(255, 0, 0)',
+                        tension: 0.1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: '10 Year Portfolio Projection'
+                    }
+                },
+                scales: {
+                    y: {}
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const goalSelect = document.getElementById('goalSelect');
+        const savedUserGoal = localStorage.getItem('userGoal');
+        if (savedUserGoal) {
+            goalSelect.value = savedUserGoal;
+        }
+
+        goalSelect.addEventListener('change', () => {
+            const goalVal = goalSelect.value;
+            localStorage.setItem('userGoal', goalVal);
+        });
     });
 </script>
