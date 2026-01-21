@@ -28,8 +28,9 @@ namespace FinancePlanner.Controllers
             int currentIncome = _context.Income.Sum(i => i.Amount);
             int currentOutcome = _context.Expense.Sum(o => o.Cost);
             currentOutcome = AddRecurringInvestmentCostsToOutcome(currentOutcome);
+            var expensePercentagesByType = GetExpensePercentagesByType();
 
-            DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome);
+            DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome, expensePercentagesByType);
 
             return View(dashboardViewModel);
         }
@@ -42,6 +43,23 @@ namespace FinancePlanner.Controllers
                 currentOutcome += recurringInvestments.Sum(ri => ri.Cost * FrequencyTypeHelper.GetAnnualMultiplier(ri.Frequency!.Value));
             }
             return currentOutcome;
+        }
+        
+        private Dictionary<string, decimal> GetExpensePercentagesByType()
+        {
+            var expenses = _context.Expense.ToList();
+            var totalCost = expenses.Sum(e => e.Cost);
+    
+            if (totalCost == 0) return new Dictionary<string, decimal>();
+    
+            var expensesPercentagesByType = expenses
+                .GroupBy(e => e.Type)
+                .ToDictionary(
+                    g => g.Key.ToString(),
+                    g => Math.Round((decimal)(g.Sum(e => e.Cost) * 100) / totalCost, 0)
+                );
+    
+            return expensesPercentagesByType;
         }
 
         [HttpPost]

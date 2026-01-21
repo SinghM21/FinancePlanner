@@ -55,29 +55,39 @@
 <div class="row">
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="projection-tab" data-bs-toggle="tab"
+            <button class="nav-link active" id="expenses-tab" data-bs-toggle="tab" data-bs-target="#expenses-tab-pane"
+                    type="button" role="tab" aria-controls="expenses-tab-pane" aria-selected="false">Expenses Breakdown
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="projection-tab" data-bs-toggle="tab"
                     data-bs-target="#projection-tab-pane" type="button" role="tab" aria-controls="projection-tab-pane"
                     aria-selected="true">Projection
             </button>
         </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="second-tab" data-bs-toggle="tab" data-bs-target="#second-tab-pane"
-                    type="button" role="tab" aria-controls="second-tab-pane" aria-selected="false">Cashflow
-            </button>
-        </li>
-        <li class="nav-item" role="presentation">
-            <button class="nav-link" id="third-tab" data-bs-toggle="tab" data-bs-target="#third-tab-pane" type="button"
-                    role="tab" aria-controls="third-tab-pane" aria-selected="false">Spending
-            </button>
-        </li>
-
     </ul>
     <div class="tab-content" id="myTabContent" style="height: 470px;">
-        <div class="tab-pane fade show active" id="projection-tab-pane" role="tabpanel" aria-labelledby="projection-tab"
+        <div class="tab-pane fade show active" id="expenses-tab-pane" role="tabpanel" aria-labelledby="expenses-tab"
              tabindex="0">
             <div class="row">
                 <div class="col-md-9" style="height: 400px;">
-                    <canvas id="myChart"></canvas>
+                    <canvas id="expensesPercentageChart"></canvas>
+                </div>
+
+                <div class="col-md-3">
+                    <div class=card>
+                        <div class="card-body">
+                            <h5 class="card-title">Expenses Settings</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="projection-tab-pane" role="tabpanel" aria-labelledby="projection-tab"
+             tabindex="0">
+            <div class="row">
+                <div class="col-md-9" style="height: 400px;">
+                    <canvas id="projectionChart"></canvas>
                 </div>
 
                 <div class="col-md-3">
@@ -106,10 +116,6 @@
                 </div>
             }
         </div>
-        <div class="tab-pane fade" id="second-tab-pane" role="tabpanel" aria-labelledby="second-tab" tabindex="0">..
-        </div>
-        <div class="tab-pane fade" id="third-tab-pane" role="tabpanel" aria-labelledby="third-tab" tabindex="0">...
-        </div>
     </div>
 </div>
 <hr/>
@@ -128,7 +134,53 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const ctx = document.getElementById('myChart');
+        const ctx = document.getElementById('expensesPercentageChart');
+
+        const expenseData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ExpensePercentagesByType));
+        const categories = Object.keys(expenseData);
+        const percentages = Object.values(expenseData);
+
+        new Chart(ctx, {
+            type: 'polarArea',
+            data: {
+                labels: categories,
+                datasets: [{
+                    label: 'Expenses by Category',
+                    data: percentages,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Expenses by Category'
+                    }
+                },
+                scales: {
+                    animate: true,
+                    r: {
+                        min: 0,
+                        max: 100
+                    }
+                },
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const ctx = document.getElementById('projectionChart');
         var min = new Date().getFullYear()
         var max = min + 10
         var years = []

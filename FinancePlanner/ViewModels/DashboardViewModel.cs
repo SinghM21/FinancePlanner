@@ -16,11 +16,13 @@ namespace FinancePlanner.ViewModels
         }
         public decimal[]? YearlyIncome { get; }
         public decimal[]? YearlyOutcome { get; }
+        public Dictionary<string, decimal>? ExpensePercentagesByType { get; }
 
-        public DashboardViewModel(int currentIncome, int currentOutcome)
+        public DashboardViewModel(int currentIncome, int currentOutcome, Dictionary<string, decimal> expensePercentagesByType)
         {
             this.CurrentIncome = currentIncome;
             this.CurrentOutcome = currentOutcome;
+            this.ExpensePercentagesByType = expensePercentagesByType;
             this.YearlyIncome = ProjectionCalculator.CalculateYearlyProjection(currentIncome, null);
             this.YearlyOutcome = ProjectionCalculator.CalculateYearlyProjection(currentOutcome, null);
         }
