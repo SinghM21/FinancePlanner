@@ -10,7 +10,7 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-<table class="table">
+@*<table class="table">
     <thead>
         <tr>
             <th>
@@ -51,4 +51,8 @@
         </tr>
 }
     </tbody>
-</table>
+</table>*@
+<div
+    id="incomes-page"
+    data-props='@Html.Raw(Json.Serialize(Model))'>
+</div>

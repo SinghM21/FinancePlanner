@@ -76,4 +76,9 @@
     <_ContentIncludedByDefault Remove="wwwroot\lib\bootstrap\LICENSE" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\js\vue\components\" />
+    <Folder Include="wwwroot\js\vue\composables\" />
+  </ItemGroup>
+
 </Project>
