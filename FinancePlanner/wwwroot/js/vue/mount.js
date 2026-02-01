@@ -1,8 +1,9 @@
-﻿const { createApp } = Vue;
-import IncomesPage from './pages/IncomesPage.js';
+﻿console.log('mount.js loaded');
+const { createApp } = Vue;
+import DashboardPage from './pages/DashboardPage.js';
 
 const mounts = {
-    'incomes-page' : IncomesPage,
+    'dashboard-page' : DashboardPage,
 }
 
 Object.entries(mounts).forEach(([id, component]) => {

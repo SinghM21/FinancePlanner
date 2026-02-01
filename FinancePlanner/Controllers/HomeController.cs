@@ -23,6 +23,18 @@ namespace FinancePlanner.Controllers
             _context = financePlannerContext;
         }
 
+        public IActionResult Dashboard()
+        {
+            int currentIncome = _context.Income.Sum(i => i.Amount);
+            int currentOutcome = _context.Expense.Sum(o => o.Cost);
+            currentOutcome = AddRecurringInvestmentCostsToOutcome(currentOutcome);
+            var expensePercentagesByType = GetExpensePercentagesByType();
+
+            DashboardViewModel dashboardViewModel = new(currentIncome, currentOutcome, expensePercentagesByType);
+
+            return View(dashboardViewModel);
+        }
+        
         public IActionResult Index()
         {
             int currentIncome = _context.Income.Sum(i => i.Amount);

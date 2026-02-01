@@ -1,0 +1,14 @@
+﻿@model FinancePlanner.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div
+    id="dashboard-page"
+    data-props="@Html.Raw(Json.Serialize(Model))">
+</div>
+
+@section Scripts {
+    <script type="module" src="~/js/vue/mount.js"></script>
+}
