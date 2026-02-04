@@ -1,4 +1,5 @@
-﻿@model FinancePlanner.ViewModels.DashboardViewModel
+﻿@using System.Text.Json
+@model FinancePlanner.ViewModels.DashboardViewModel
 
 @{
     ViewData["Title"] = "Dashboard";
@@ -6,7 +7,7 @@
 
 <div
     id="dashboard-page"
-    data-props="@Html.Raw(Json.Serialize(Model))">
+    data-props='@Html.Raw(JsonSerializer.Serialize(Model))'>
 </div>
 
 @section Scripts {

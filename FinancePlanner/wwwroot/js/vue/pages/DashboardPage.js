@@ -1,4 +1,12 @@
 ﻿export default {
+    props: {
+        CurrentIncome: Number,
+        CurrentOutcome: Number,
+        NetIncome: Number,
+        YearlyIncome: Array,
+        YearlyOutcome: Array,
+        ExpensePercentagesByType: Object,
+    },
     data() {
         return {
             message: "Hello from Vue!"
@@ -18,7 +26,7 @@
                 <div class="card" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">Income</h5>
-                        <p>@Model.CurrentIncome</p>
+                        <p>{{ CurrentIncome }}</p>
                     </div>
                 </div>
             </div>
@@ -27,7 +35,7 @@
                 <div class="card" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">Expenses</h5>
-                        <p>@Model.CurrentOutcome</p>
+                        <p>{{ CurrentOutcome }}</p>
                     </div>
                 </div>
             </div>
@@ -36,7 +44,7 @@
                 <div class="card" style="width: 18rem;">
                     <div class="card-body">
                         <h5 class="card-title">Remaining</h5>
-                        <p>@Model.NetIncome</p>
+                        <p>{{ NetIncome }}</p>
                     </div>
                 </div>
             </div>
