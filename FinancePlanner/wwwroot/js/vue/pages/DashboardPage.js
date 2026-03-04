@@ -65,7 +65,55 @@
             </div>
         </div>
         <hr/>
-        <p>{{ message }}</p>
+        <div class="row">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="expenses-tab" data-bs-toggle="tab" data-bs-target="#expenses-tab-pane"
+                            type="button" role="tab" aria-controls="expenses-tab-pane" aria-selected="false">Expenses Breakdown
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="projection-tab" data-bs-toggle="tab"
+                            data-bs-target="#projection-tab-pane" type="button" role="tab" aria-controls="projection-tab-pane"
+                            aria-selected="true">Projection
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent" style="height: 470px;">
+                <div class="tab-pane fade show active" id="expenses-tab-pane" role="tabpanel" aria-labelledby="expenses-tab"
+                     tabindex="0">
+                    <div class="row">
+                        <div class="col-md-6" style="height: 400px;">
+                            <canvas id="expensesPercentageChart"></canvas>
+                        </div>
+            
+                        <div class="col-md-6">
+                            <div class=card>
+                                <div class="card-body">
+                                    <h5 class="card-title">Expenses Settings</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="projection-tab-pane" role="tabpanel" aria-labelledby="projection-tab"
+                     tabindex="0">
+                    <div class="row">
+                        <div class="col-md-6" style="height: 400px;">
+                            <canvas id="projectionChart"></canvas>
+                        </div>
+            
+                        <div class="col-md-6">
+                            <div class=card>
+                                <div class="card-body">
+                                    <h5 class="card-title">Projection Settings</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     `
 }
