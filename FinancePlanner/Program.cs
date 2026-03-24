@@ -12,6 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddViteServices(options =>
 {
     options.Server.AutoRun = true;
+    options.Server.PackageDirectory = "Frontend";
 });
 builder.Services.AddDbContext<FinancePlannerContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -29,7 +30,6 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-    app.UseViteDevelopmentServer(true);
 }
 
 app.UseHttpsRedirection();
@@ -42,5 +42,10 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseViteDevelopmentServer(true);
+}
 
 app.Run();

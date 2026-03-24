@@ -12,6 +12,7 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="wwwroot\assets\.vite\manifest.json" />
   </ItemGroup>
 
   <ItemGroup>
