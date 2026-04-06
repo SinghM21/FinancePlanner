@@ -6,11 +6,12 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  
   <ItemGroup>
     <Content Include=".config\dotnet-tools.json" />
     <Content Update="Frontend\src\pages\DashboardPage.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </Content>
     <Content Include="wwwroot\assets\.vite\manifest.json" />
   </ItemGroup>
@@ -83,9 +84,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Frontend\" />
-    <Folder Include="wwwroot\js\vue\components\" />
-    <Folder Include="wwwroot\js\vue\composables\" />
+    <None Include="wwwroot/**" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
+  
+  <Target Name="ViteBuild" BeforeTargets="BeforeBuild" Condition=" '$(Configuration)' == 'Release' ">
+    <Exec Command="npm run build" WorkingDirectory="Frontend"/>
+  </Target>
 
 </Project>

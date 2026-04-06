@@ -9,3 +9,13 @@
     id="dashboard-page"
     data-props='@Html.Raw(JsonSerializer.Serialize(Model))'>
 </div>
+
+<environment include="Development">
+    <link rel="stylesheet" vite-href="~/src/main.js" asp-append-version="true" />
+    <script type="module" vite-src="~/src/main.js" asp-append-version="true"></script>
+</environment>
+<environment include="Production">
+    <link rel="stylesheet" href="~/assets/main.js" asp-append-version="true" />
+    <script type="module" src="~/assets/main.js" asp-append-version="true"></script>
+</environment>
+

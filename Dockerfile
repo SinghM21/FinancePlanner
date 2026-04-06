@@ -2,6 +2,11 @@
 
 # Build stage
 FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+RUN apt-get update
+RUN apt-get install -y curl
+RUN apt-get install -y libpng-dev libjpeg-dev curl libxi6 build-essential libgl1-mesa-glx
+RUN curl -sL https://deb.nodesource.com/setup_lts.x | bash -
+RUN apt-get install -y nodejs
 WORKDIR /source
 
 # Install EF Core CLI
@@ -18,6 +23,7 @@ RUN dotnet restore FinancePlanner.sln
 
 # Copy everything else and build
 COPY . .
+RUN cd FinancePlanner/Frontend \ && npm install
 RUN dotnet publish FinancePlanner/FinancePlanner.csproj \
     -c Release -o /app --no-restore
 
