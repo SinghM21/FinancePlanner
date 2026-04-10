@@ -1,0 +1,44 @@
+﻿version: '3.8'
+
+services:
+  sqlserver-dev:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: financeplanner-sqlserver-dev
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: ${dbpassword}
+      ACCEPT_EULA: "Y"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: financeplanner-migrate-dev
+    depends_on:
+      - sqlserver-dev
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=sqlserver-dev,1433;Database=FinancePlanner;User Id=${dbusername};Password=${dbpassword};TrustServerCertificate=true;
+    command: sh -c "dotnet ef database update --project FinancePlanner/FinancePlanner.csproj --startup-project FinancePlanner/FinancePlanner.csproj"
+
+  financeplanner-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: financeplanner-dev
+    depends_on:
+      - sqlserver-dev
+      - migrate
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./FinancePlanner:/source/FinancePlanner
+      - ./FinancePlannerTests:/source/FinancePlannerTests
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver-dev,1433;Database=FinancePlanner;User Id=${dbusername};Password=${dbpassword};TrustServerCertificate=true;
+
+volumes:
+  sqlserver-data:
