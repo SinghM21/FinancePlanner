@@ -12,17 +12,6 @@ services:
     volumes:
       - sqlserver-data:/var/opt/mssql
 
-  migrate:
-    build:
-      context: .
-      dockerfile: Dockerfile.dev
-    container_name: financeplanner-migrate-dev
-    depends_on:
-      - sqlserver-dev
-    environment:
-      - ConnectionStrings__DefaultConnection=Server=sqlserver-dev,1433;Database=FinancePlanner;User Id=${dbusername};Password=${dbpassword};TrustServerCertificate=true;
-    command: sh -c "dotnet ef database update --project FinancePlanner/FinancePlanner.csproj --startup-project FinancePlanner/FinancePlanner.csproj"
-
   financeplanner-dev:
     build:
       context: .
@@ -30,9 +19,9 @@ services:
     container_name: financeplanner-dev
     depends_on:
       - sqlserver-dev
-      - migrate
     ports:
-      - "5000:5000"
+      - "5001:5000"
+      - "5173:5173"
     volumes:
       - ./FinancePlanner:/source/FinancePlanner
       - ./FinancePlannerTests:/source/FinancePlannerTests
