@@ -45,6 +45,11 @@ app.MapControllerRoute(
 
 if (app.Environment.IsDevelopment())
 {
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<FinancePlannerContext>();
+        dbContext.Database.Migrate();
+    }
     app.UseViteDevelopmentServer(true);
 }
 
