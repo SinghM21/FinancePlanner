@@ -14,6 +14,8 @@ namespace FinancePlanner.ViewModels
 
         [NotEnumValue(InvestmentType.None, ErrorMessage = "Please select an investment type")]
         public InvestmentType Type { get; set; }
+        
+        public PingItem? PingItem { get; set; }
 
         public int? Quantity { get; set; }
 
