@@ -15,11 +15,13 @@ namespace FinancePlanner.Controllers
     {
         private readonly IInvestmentMapper _investmentMapper;
         private readonly IInvestmentService _investmentService;
+        private readonly IStockService _stockService;
 
-        public InvestmentsController(IInvestmentMapper investmentMapper, IInvestmentService investmentService)
+        public InvestmentsController(IInvestmentMapper investmentMapper, IInvestmentService investmentService, IStockService stockService)
         {
             _investmentMapper = investmentMapper;
             _investmentService = investmentService;
+            _stockService = stockService;
         }
 
         // GET: Investments
@@ -27,6 +29,15 @@ namespace FinancePlanner.Controllers
         {
             var investments = await _investmentService.GetAllInvestmentsAsync();
             
+            if (_stockService.GetStockValue("IBM") == null)
+            {
+                ViewData["IBMStockValue"] = "Stock value will refresh in 5 minutes";
+            }
+            else
+            {
+                ViewData["IBMStockValue"] = _stockService.GetStockValue("IBM");
+            }
+
             IEnumerable<InvestmentViewModel> investmentVms = investments
                 .Select(dto => _investmentMapper.MapToViewModel(dto))
                 .ToList();

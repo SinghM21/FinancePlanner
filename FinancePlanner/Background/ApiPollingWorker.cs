@@ -1,16 +1,22 @@
-﻿namespace FinancePlanner.Background;
+﻿using System.Text.Json;
+using FinancePlanner.Services;
+
+namespace FinancePlanner.Background;
 
 public class ApiPollingWorker: BackgroundService
 {
+    private readonly IStockService _stockService;
+
+    public ApiPollingWorker(IStockService stockService)
+    {
+        _stockService = stockService;
+    }
+    
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         try
         {
-            string apiUrl = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSCO.LON&outputsize=full&apikey=demo";
-            using var client = new HttpClient()
-            {
-                
-            }
+            await _stockService.UpdateStockValuesAsync();
         }
         catch (Exception ex)
         {

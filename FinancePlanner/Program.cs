@@ -1,3 +1,4 @@
+using FinancePlanner.Background;
 using FinancePlanner.Contexts;
 using FinancePlanner.Mappers;
 using FinancePlanner.Services;
@@ -21,6 +22,9 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Register mapper and service for DI
 builder.Services.AddScoped<IInvestmentMapper, InvestmentMapper>();
 builder.Services.AddScoped<IInvestmentService, InvestmentService>();
+builder.Services.AddHostedService<ApiPollingWorker>();
+builder.Services.AddSingleton<IStockService, StockService>();
+builder.Services.AddScoped<IStockDataParser, StockDataParser>();
 
 var app = builder.Build();
 
