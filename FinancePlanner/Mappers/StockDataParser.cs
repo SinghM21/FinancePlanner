@@ -1,4 +1,6 @@
-using FinancePlanner.Background;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using FinancePlanner.Models.Stocks;
 
 namespace FinancePlanner.Mappers;
 
@@ -10,7 +12,7 @@ public class StockDataParser : IStockDataParser
         {
             return null;
         }
-        
-        return System.Text.Json.JsonSerializer.Deserialize<StockData>(json);
+        var options = new JsonSerializerOptions { NumberHandling = JsonNumberHandling.AllowReadingFromString }; 
+        return JsonSerializer.Deserialize<StockData>(json, options);
     }
 }

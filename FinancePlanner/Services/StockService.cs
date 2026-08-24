@@ -1,6 +1,5 @@
-using System.Text.Json;
-using FinancePlanner.Background;
 using FinancePlanner.Mappers;
+using FinancePlanner.Models.Stocks;
 
 namespace FinancePlanner.Services;
 
@@ -24,7 +23,7 @@ public class StockService : IStockService
         StockData? stockData = _stockDataParser.ParseStockData(await response.Content.ReadAsStringAsync());
         if (stockData != null)
         {
-            SetStockValue("IBM", Decimal.Parse(stockData.TimeSeries.First().Value["4. close"]));
+            SetStockValue("IBM", stockData.TimeSeries.First().Value.Close);
         }
     }
     

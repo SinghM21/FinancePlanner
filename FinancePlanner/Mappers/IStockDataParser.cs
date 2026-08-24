@@ -1,4 +1,4 @@
-using FinancePlanner.Background;
+using FinancePlanner.Models.Stocks;
 
 namespace FinancePlanner.Mappers;
 
