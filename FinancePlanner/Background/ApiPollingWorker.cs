@@ -14,15 +14,22 @@ public class ApiPollingWorker: BackgroundService
     
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        await DoWork(stoppingToken);
+    }
+    
+    private async Task DoWork(CancellationToken stoppingToken)
+    {
         try
         {
-            await _stockService.UpdateStockValuesAsync();
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                await _stockService.UpdateStockValuesAsync(stoppingToken);
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error occurred in ApiPollingWorker: {ex.Message}");
         }
-        
-        await Task.Delay(TimeSpan.FromMinutes(5),stoppingToken);
     }
 }

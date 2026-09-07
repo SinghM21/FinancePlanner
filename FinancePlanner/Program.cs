@@ -24,7 +24,7 @@ builder.Services.AddScoped<IInvestmentMapper, InvestmentMapper>();
 builder.Services.AddScoped<IInvestmentService, InvestmentService>();
 builder.Services.AddHostedService<ApiPollingWorker>();
 builder.Services.AddSingleton<IStockService, StockService>();
-builder.Services.AddScoped<IStockDataParser, StockDataParser>();
+builder.Services.AddSingleton<IStockDataParser, StockDataParser>();
 
 var app = builder.Build();
 
